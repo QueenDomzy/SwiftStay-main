@@ -1,0 +1,96 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id          String    @id @default(uuid())
+  name        String
+  email       String    @unique
+  password    String
+  phone       String?
+  role        Role      @default(USER)
+  bookings    Booking[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Hotel {
+  id          String    @id @default(uuid())
+  name        String
+  description String?
+  location    String
+  rating      Float?    @default(0.0)
+  owner       User?     @relation(fields: [ownerId], references: [id])
+  ownerId     String?
+  rooms       Room[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Room {
+  id          String    @id @default(uuid())
+  hotel       Hotel     @relation(fields: [hotelId], references: [id])
+  hotelId     String
+  roomNumber  String
+  type        String    // e.g., Single, Double, Suite
+  price       Float
+  available   Boolean   @default(true)
+  bookings    Booking[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Booking {
+  id          String    @id @default(uuid())
+  user        User      @relation(fields: [userId], references: [id])
+  userId      String
+  room        Room      @relation(fields: [roomId], references: [id])
+  roomId      String
+  checkIn     DateTime
+  checkOut    DateTime
+  totalPrice  Float
+  status      BookingStatus @default(PENDING)
+  payment     Payment?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Payment {
+  id          String    @id @default(uuid())
+  booking     Booking   @relation(fields: [bookingId], references: [id])
+  bookingId   String
+  amount      Float
+  provider    PaymentProvider
+  status      PaymentStatus @default(PENDING)
+  transactionRef String  @unique
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+enum Role {
+  USER
+  ADMIN
+  HOTEL_OWNER
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+}
+
+enum PaymentStatus {
+  PENDING
+  SUCCESS
+  FAILED
+}
+
+enum PaymentProvider {
+  PAYSTACK
+  FLUTTERWAVE
+}
