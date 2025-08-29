@@ -1,0 +1,86 @@
+// src/routes/payments.ts
+import { Router } from "express";
+import prisma from "../utils/prismaClient";
+import axios from "axios";
+
+const router = Router();
+
+/**
+ * Record a payment and (optionally) initialize with provider.
+  * Body: { bookingId, amount, provider, initialize?: boolean, email? }
+   */
+   router.post("/", async (req, res) => {
+     try {
+         const { bookingId, amount, provider, initialize = false, email, transactionRef } = req.body;
+             if (!bookingId || !amount || !provider) {
+                   return res.status(400).json({ error: "Missing required fields" });
+                       }
+
+
+                           // Optionally initialize with provider (Paystack example)
+                               let providerResponse = null;
+                                   if (initialize) {
+                                         if (provider.toUpperCase() === "PAYSTACK") {
+                                                 const resp = await axios.post(
+                                                           "https://api.paystack.co/transaction/initialize",
+                                                                     { amount: Math.round(amount * 100), email },
+                                                                               { headers: { Authorization: `Bearer ${process.env.PAYSTACK_SECRET_KEY}` } }
+                                                                                       );
+                                                                                               providerResponse = resp.data;
+                                                                                                     } else if (provider.toUpperCase() === "FLUTTERWAVE") {
+                                                                                                             const resp = await axios.post(
+                                                                                                                       "https://api.flutterwave.com/v3/payments",
+                                                                                                                                 {
+                                                                                                                                             tx_ref: Date.now().toString(),
+                                                                                                                                                         amount,
+                                                                                                                                                                     currency: "NGN",
+                                                                                                                                                                                 redirect_url: `${process.env.NEXT_PUBLIC_APP_URL}/payment/callback`,
+                                                                                                                                                                                             customer: { email }
+                                                                                                                                                                                                       },
+                                                                                                                                                                                                                 { headers: { Authorization: `Bearer ${process.env.FLUTTERWAVE_SECRET_KEY}` } }
+                                                                                                                                                                                                                         );
+                                                                                                                                                                                                                                 providerResponse = resp.data;
+                                                                                                                                                                                                                                       }
+                                                                                                                                                                                                                                           }
+
+                                                                                                                                                                                                                                               // Create payment record (store provider, amount, transactionRef if available)
+                                                                                                                                                                                                                                                   const payment = await prisma.payment.create({
+                                                                                                                                                                                                                                                         data: {
+                                                                                                                                                                                                                                                                 bookingId,
+                                                                                                                                                                                                                                                                         amount: Number(amount),
+                                                                                                                                                                                                                                                                                 provider: provider.toUpperCase(),
+                                                                                                                                                                                                                                                                                         status: "PENDING",
+                                                                                                                                                                                                                                                                                                 transactionRef: transactionRef || (providerResponse?.data?.reference ?? `ref_${Date.now()}`),
+                                                                                                                                                                                                                                                                                                       }
+                                                                                                                                                                                                                                                                                                           });
+
+                                                                                                                                                                                                                                                                                                               return res.status(201).json({ payment, providerResponse });
+                                                                                                                                                                                                                                                                                                                 } catch (err: any) {
+                                                                                                                                                                                                                                                                                                                     console.error("Payments error:", err.response?.data ?? err.message ?? err);
+                                                                                                                                                                                                                                                                                                                         return res.status(500).json({ error: err.message || "Server error" });
+                                                                                                                                                                                                                                                                                                                           }
+                                                                                                                                                                                                                                                                                                                           });
+
+                                                                                                                                                                                                                                                                                                                           /**
+                                                                                                                                                                                                                                                                                                                            * Get payments (optional ?bookingId= or ?userId=)
+                                                                                                                                                                                                                                                                                                                             */
+                                                                                                                                                                                                                                                                                                                             router.get("/", async (req, res) => {
+                                                                                                                                                                                                                                                                                                                               try {
+                                                                                                                                                                                                                                                                                                                                   const { bookingId, userId } = req.query;
+                                                                                                                                                                                                                                                                                                                                       const where: any = {};
+                                                                                                                                                                                                                                                                                                                                           if (bookingId) where.bookingId = String(bookingId);
+                                                                                                                                                                                                                                                                                                                                               if (userId) where.booking = { userId: String(userId) }; // relation filter
+
+                                                                                                                                                                                                                                                                                                                                                   const payments = await prisma.payment.findMany({
+                                                                                                                                                                                                                                                                                                                                                         where,
+                                                                                                                                                                                                                                                                                                                                                               orderBy: { createdAt: "desc" },
+                                                                                                                                                                                                                                                                                                                                                                   });
+
+                                                                                                                                                                                                                                                                                                                                                                       return res.status(200).json(payments);
+                                                                                                                                                                                                                                                                                                                                                                         } catch (err: any) {
+                                                                                                                                                                                                                                                                                                                                                                             console.error("Get payments error:", err);
+                                                                                                                                                                                                                                                                                                                                                                                 return res.status(500).json({ error: err.message || "Server error" });
+                                                                                                                                                                                                                                                                                                                                                                                   }
+                                                                                                                                                                                                                                                                                                                                                                                   });
+
+                                                                                                                                                                                                                                                                                                                                                                                   export default router;H
