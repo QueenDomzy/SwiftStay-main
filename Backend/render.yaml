@@ -1,0 +1,20 @@
+services:
+  - type: web
+    name: swiftstay-backend
+    env: node
+    buildCommand: npm install && npm run build
+    startCommand: npm run start:prod
+    plan: free
+    branch: main
+    envVars:
+      - key: DATABASE_URL
+        value: postgres://user:pass@host:5432/swiftstay
+      - key: PAYSTACK_SECRET
+        value: sk_test_xxxxx
+      - key: FLUTTERWAVE_SECRET
+        value: FLWSECK-xxxxx
+        # AI provider
+        AI_PROVIDER=openai
+        AI_API_KEY=replace_with_your_key
+        AI_API_BASE=
+        AI_MODEL=gpt-4o-min
