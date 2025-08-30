@@ -4,9 +4,10 @@
   "description": "Backend for SwiftStay Nigeria",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js",
-    "dev": "nodemon server.js"
-  },
+  "start": "node server.js",
+  "dev": "nodemon server.js",
+  "build": "echo 'No build step required'"
+}
   "dependencies": {
     "express": "^4.18.2",
     "cors": "^2.8.5",
