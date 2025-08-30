@@ -7,5 +7,3 @@ export class ChatMessageDto {
 export class ChatRequestDto {
       messages: ChatMessageDto[]; // include past few turns for context
 }
-}
-}
