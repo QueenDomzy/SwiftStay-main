@@ -1,21 +1,15 @@
 // src/chat/chat.dto.ts
-import { IsString, IsArray } from 'class-validator';
-
-export class ChatRequestDto {
-  @IsArray()
-  @IsString({ each: true })
-  messages: string[];
-}
-
-export class ChatDto {
-  messages!: string[]; // add ! to tell TS it will be assigned
-}
+import { IsArray, ValidateNested } from "class-validator";
+import { Type } from "class-transformer";
 
 export class ChatMessageDto {
-  role!: string;
-  content!: string;
+  role: "user" | "assistant" | "system";
+  content: string;
 }
 
 export class ChatDto {
-  messages!: ChatMessageDto[];
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => ChatMessageDto)
+  messages: ChatMessageDto[] = [];  // ✅ Initialize to empty array
 }
