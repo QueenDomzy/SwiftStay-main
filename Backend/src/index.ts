@@ -1,10 +1,14 @@
 import "reflect-metadata";
 import express from "express";
 import * as dotenv from "dotenv";
+
+// Route imports
 import authRoutes from "./routes/auth";
 import reservationRoutes from "./routes/reservations";
 import flutterwaveRoutes from "./routes/flutterwave.routes";
 import paystackRoutes from "./routes/paystack.routes";
+import chatRoutes from "./chat/chat.controller"; // ✅ NEW
+
 import Flutterwave from "flutterwave-node-v3";
 import Paystack from "paystack-api"; // adjust if not default export
 
@@ -12,7 +16,10 @@ dotenv.config();
 
 const paystack = Paystack(process.env.PAYSTACK_SECRET_KEY as string);
 
-const flw = new Flutterwave(process.env.FLW_PUBLIC_KEY as string, process.env.FLW_SECRET_KEY as string);
+const flw = new Flutterwave(
+  process.env.FLW_PUBLIC_KEY as string,
+  process.env.FLW_SECRET_KEY as string
+);
 
 export class PaystackService {
   async initializePayment(data: any) {
@@ -32,6 +39,7 @@ app.use("/paystack", paystackRoutes);
 app.use("/flutterwave", flutterwaveRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/reservations", reservationRoutes);
+app.use("/api/chat", chatRoutes); // ✅ NEW Chat route
 
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {
