@@ -8,9 +8,10 @@ export class ChatRequestDto {
 }
 
 export class ChatMessageDto {
-  @IsString()
-  role: string;
-
-  @IsString()
-  content: string;
+  role!: string;
+  content!: string;
 }
+
+export class ChatDto {
+  messages!: ChatMessageDto[];
+             }
