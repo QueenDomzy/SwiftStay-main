@@ -14,4 +14,4 @@ export class ChatMessageDto {
 
 export class ChatDto {
   messages!: ChatMessageDto[];
-             }
+}
