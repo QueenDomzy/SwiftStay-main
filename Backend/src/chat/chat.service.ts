@@ -30,14 +30,13 @@ export class ChatService {
         })),
       });
     }
-      const text =
-        response.choices[0]?.message?.content?.trim() ||
-        'Sorry, I could not generate a reply.';
-
-      return { reply: text };
-    } catch (error) {
-      console.error('ChatService error:', error);
-      return { reply: 'An error occurred while processing your request.' };
-    }
-  }
+  {
+  const response = await this.openai.chat.completions.create({
+    model: "gpt-4o-mini",
+    messages: dto.messages,
+  });
+  return response.choices[0].message.content;
+} catch (error) {
+  console.error("OpenAI API Error:", error);
+  throw new Error("Failed to fetch response from OpenAI");
 }
