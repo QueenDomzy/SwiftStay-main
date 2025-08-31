@@ -1,12 +1,10 @@
 import 'reflect-metadata';
-import dotenv from "dotenv";
 import authRoutes from "./routes/auth";
 import reservationRoutes from "./routes/reservations";
 import flutterwaveRoutes from "./routes/flutterwave.routes";
 import * as dotenv from "dotenv";
+import paystackRoutes from "./routes/paystack.routes"; // adjust path if needed
 dotenv.config();
-
-import Paystack from "paystack-api";
 
 const paystack = Paystack(process.env.PAYSTACK_SECRET_KEY as string);
 
