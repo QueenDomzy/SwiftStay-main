@@ -16,7 +16,6 @@ const router = Router();
                    return res.status(400).json({ error: "Missing required fields" });
                        }
 
-
                            // Optionally initialize with provider (Paystack example)
                                let providerResponse = null;
                                    if (initialize) {
@@ -83,4 +82,4 @@ const router = Router();
                                                                                                                                                                                                                                                                                                                                                                                    }
                                                                                                                                                                                                                                                                                                                                                                                    });
 
-                                                                                                                                                                                                                                                                                                                                                                                   export default router;H
+                                                                                                                                                                                                                                                                                                                                                                                   export default router;
