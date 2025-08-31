@@ -3,9 +3,10 @@ import { IsArray, ValidateNested } from "class-validator";
 import { Type } from "class-transformer";
 import OpenAI from "openai";
 
-cost messages: OpenAI.Chat.ChatCompletionMessageParam[] =  [
-  { role: "user", coontent: "Hello" }
-  ];
+// ✅ fixed 'const' and 'content'
+const messages: OpenAI.Chat.Completions.ChatCompletionMessageParam[] = [
+  { role: "user", content: "Hello" },
+];
 
 export class ChatMessageDto {
   role!: "user" | "assistant" | "system";
@@ -16,5 +17,5 @@ export class ChatDto {
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => ChatMessageDto)
-  messages: ChatMessageDto[] = [];  // ✅ Initialize to empty array
+  messages: ChatMessageDto[] = []; // initialized properly
 }
