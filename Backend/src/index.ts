@@ -3,10 +3,23 @@ import express from "express";
 import dotenv from "dotenv";
 import authRoutes from "./routes/auth";
 import reservationRoutes from "./routes/reservations";
-import paystackRoutes from "./routes/paystack.routes";
 import flutterwaveRoutes from "./routes/flutterwave.routes";
-
+import * as dotenv from "dotenv";
 dotenv.config();
+
+import Paystack from "paystack-api";
+
+const paystack = Paystack(process.env.PAYSTACK_SECRET_KEY as string);
+
+export class PaystackService {
+  async initializePayment(data: any) {
+    return await paystack.transaction.initialize(data);
+  }
+
+  async verifyPayment(reference: string) {
+    return await paystack.transaction.verify({ reference });
+  }
+}
 
 const app = express();
 app.use(express.json());
