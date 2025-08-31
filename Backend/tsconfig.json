@@ -3,7 +3,7 @@
         "target": "ES2020",
         "module": "commonjs",
         "outDir": "./dist",
-        "rootDir": "Backend",
+        "rootDir": "./src",
         "experimentalDecorators": true,
         "emitDecoratorMetadata": true,
         "strict": true,
