@@ -1,17 +1,21 @@
-import 'reflect-metadata';
+import "reflect-metadata";
+import express from "express";
+import * as dotenv from "dotenv";
 import authRoutes from "./routes/auth";
 import reservationRoutes from "./routes/reservations";
 import flutterwaveRoutes from "./routes/flutterwave.routes";
+import paystackRoutes from "./routes/paystack.routes";
 import Flutterwave from "flutterwave-node-v3";
-import * as dotenv from "dotenv";
-Import Paystack from "paystack-api";
-import paystackRoutes from "./routes/paystack.routes"; // adjust path if needed
+import Paystack from "paystack-api"; // adjust if not default export
+
 dotenv.config();
-Import express from "express";
 
 const paystack = Paystack(process.env.PAYSTACK_SECRET_KEY as string);
-const flw = new
-Flutterwave(PROCESS.env.FLW_PUBLIC_KEY, process.env.FLW_SECRET_KEY);
+
+const flw = new Flutterwave(
+  process.env.FLW_PUBLIC_KEY as string,
+  process.env.FLW_SECRET_KEY as string
+);
 
 export class PaystackService {
   async initializePayment(data: any) {
