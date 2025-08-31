@@ -5,6 +5,10 @@ import { ChatCompletionMessageParam} from "openai/resources/chat";
 
 @Injectable()
 export class ChatService {
+  async getResponse(messages: string[]): Promise<string> {
+  // Example mock response – replace with OpenAI or logic later
+  return `You said: ${messages.join(", ")}`;
+}
   private client: OpenAI;
 
   constructor() {
