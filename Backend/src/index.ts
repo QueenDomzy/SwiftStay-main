@@ -12,10 +12,7 @@ dotenv.config();
 
 const paystack = Paystack(process.env.PAYSTACK_SECRET_KEY as string);
 
-const flw = new Flutterwave(
-  process.env.FLW_PUBLIC_KEY as string,
-  process.env.FLW_SECRET_KEY as string
-);
+const flw = new Flutterwave(process.env.FLW_PUBLIC_KEY as string, process.env.FLW_SECRET_KEY as string);
 
 export class PaystackService {
   async initializePayment(data: any) {
