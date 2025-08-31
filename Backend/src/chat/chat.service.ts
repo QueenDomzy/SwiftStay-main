@@ -5,14 +5,14 @@ import { ChatCompletionMessageParam} from "openai/resources/chat";
 
 @Injectable()
 export class ChatService {
-  async getResponse(messages: string[]): Promise<string> {
+  private openai: OpenAI;
+   async getResponse(messages: string[]): Promise<string> {
   // Example mock response – replace with OpenAI or logic later
   return `You said: ${messages.join(", ")}`;
 }
-  private client: OpenAI;
-
+  
   constructor() {
-    this.client = new OpenAI({
+    this.openai = new OpenAI({
       apiKey: process.env.OPENAI_API_KEY,
     });
   }
@@ -29,7 +29,7 @@ export class ChatService {
           content: m.content,
         })),
       });
-
+    }
       const text =
         response.choices[0]?.message?.content?.trim() ||
         'Sorry, I could not generate a reply.';
