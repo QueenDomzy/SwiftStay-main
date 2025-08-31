@@ -1,5 +1,6 @@
 import { Controller, Post, Body } from '@nestjs/common';
 import { ChatService } from './chat.service';
+Import { ChatDto } from "./chat.dto";
 import { ChatRequestDto } from './chat.dto';
 import { ChatCompletionMessageParam } from "openai/resources/chat";
 
@@ -7,7 +8,9 @@ import { ChatCompletionMessageParam } from "openai/resources/chat";
 export class ChatController {
   constructor(private readonly chatService: ChatService) {}
 
-  @Post()
+  @Post("send" )
+  async sendMessaage(@Body() chatDto: ChatDto) { return this.chatService.getResponse(chatDto.messages);
+  }
   async postChat(@Body() body: ChatRequestDto)
     const messages: ChatCompletionMessageParam[] = [
   { role: "user", content: "Hello" }
