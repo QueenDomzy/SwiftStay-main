@@ -1,12 +1,16 @@
 // src/chat/chat.dto.ts
-import { IsString, IsNotEmpty } from 'class-validator';
+import { IsString, IsArray } from 'class-validator';
 
 export class ChatRequestDto {
+  @IsArray()
+  @IsString({ each: true })
+  messages: string[];
+}
+
+export class ChatMessageDto {
   @IsString()
-  @IsNotEmpty()
-  message!: string;  // use "!" to silence TS initializer error
+  role: string;
 
   @IsString()
-  @IsNotEmpty()
-  userId!: string;
+  content: string;
 }
