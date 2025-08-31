@@ -1,9 +1,9 @@
-import { Module } from '@nestjs/common';
-import { ChatController } from './chat.controller';
-import { ChatService } from './chat.service';
+import ChatController from "./chat.controller";
+import { Router } from "express";
 
-@Module({
-  controllers: [ChatController],
-  providers: [ChatService],
-})
-export class ChatModule {}
+const chatRoutes = Router();
+const chatController = new ChatController();
+
+chatRoutes.post("/", (req, res) => chatController.handleMessage(req, res));
+
+export default chatRoutes;
