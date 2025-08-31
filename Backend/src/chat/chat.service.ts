@@ -1,5 +1,5 @@
-import { Injectable } from "@nestjs/common";
-import OpenAI from "openai";
+  import { Injectable } from "@nestjs/common";
+import OpenAI, { ChatCompletionMessageParam } from "openai";
 import { ChatDto } from "./chat.dto";
 
 @Injectable()
@@ -15,8 +15,8 @@ export class ChatService {
   async getResponse(messages: ChatDto["messages"]): Promise<string> {
     try {
       const response = await this.openai.chat.completions.create({
-        model: "gpt-4o-mini", // or gpt-3.5-turbo if cheaper
-        messages: messages,
+        model: "gpt-4o-mini",
+        messages: messages as ChatCompletionMessageParam[], // ✅ cast properly
       });
 
       return response.choices[0].message?.content ?? "No response";
