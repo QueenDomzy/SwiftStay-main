@@ -1,15 +1,13 @@
 // src/chat/chat.dto.ts
-import { IsArray, ValidateNested } from "class-validator";
+import { IsArray, ValidateNested, IsString, IsIn } from "class-validator";
 import { Type } from "class-transformer";
-import OpenAI from "openai";
 
-// ✅ fixed 'const' and 'content'
-const messages: OpenAI.Chat.Completions.ChatCompletionMessageParam[] = [
-  { role: "user", content: "Hello" },
-];
-
+// Define our own chat message type
 export class ChatMessageDto {
+  @IsIn(["user", "assistant", "system"])
   role!: "user" | "assistant" | "system";
+
+  @IsString()
   content!: string;
 }
 
@@ -17,5 +15,5 @@ export class ChatDto {
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => ChatMessageDto)
-  messages: ChatMessageDto[] = []; // initialized properly
+  messages: ChatMessageDto[] = []; // default empty
 }
