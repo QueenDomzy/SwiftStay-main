@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { OpenAI } from 'openai';
 import { ChatMessageDto } from './chat.dto';
+import { ChatCompletionMessageParam} from "openai/resources/chat";
 
 @Injectable()
 export class ChatService {
@@ -14,7 +15,10 @@ export class ChatService {
 
   async chat(messages: ChatMessageDto[]): Promise<{ reply: string }> {
     try {
-      const response = await this.client.chat.completions.create({
+      const messages: ChatCompletionMessageParam[] = [{ role: "user", 
+       content: "Hello" }
+   ];
+         const response = await this.openai.chat.completions.create({
         model: 'gpt-4o-mini',
         messages: messages.map(m => ({
           role: m.role as 'system' | 'user' | 'assistant',
