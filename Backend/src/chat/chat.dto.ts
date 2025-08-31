@@ -1,8 +1,6 @@
-// src/chat/chat.dto.ts
 import { IsArray, ValidateNested, IsString, IsIn } from "class-validator";
 import { Type } from "class-transformer";
 
-// Define our own chat message type
 export class ChatMessageDto {
   @IsIn(["user", "assistant", "system"])
   role!: "user" | "assistant" | "system";
@@ -15,5 +13,5 @@ export class ChatDto {
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => ChatMessageDto)
-  messages: ChatMessageDto[] = []; // default empty
-}
+  messages: ChatMessageDto[] = [];
+    }
