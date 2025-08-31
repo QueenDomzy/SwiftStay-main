@@ -7,6 +7,10 @@ export class ChatRequestDto {
   messages: string[];
 }
 
+export class ChatDto {
+  messages!: string[]; // add ! to tell TS it will be assigned
+}
+
 export class ChatMessageDto {
   role!: string;
   content!: string;
