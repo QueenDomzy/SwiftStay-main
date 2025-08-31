@@ -8,8 +8,7 @@ export class ChatController {
   constructor(private readonly chatService: ChatService) {}
 
   @Post()
-  async postChat(@Body() body: ChatRequestDto) {
-    const { messages } = body || { messages: [] };
+  async postChat(@Body() body: ChatRequestDto)
     const messages: ChatCompletionMessageParam[] = [
   { role: "user", content: "Hello" }
 ];
