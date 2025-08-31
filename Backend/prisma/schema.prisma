@@ -1,73 +1,90 @@
+// prisma/schema.prisma
+
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "postgresql" // or "mysql" depending on your DB
   url      = env("DATABASE_URL")
 }
 
+// ======================
+// User Model
+// ======================
 model User {
-  id        String   @id @default(uuid())
-  email     String   @unique
-  password  String
-  hotels    Hotel[]  // <- this links to Hotel.owner
-}
-
-model Hotel {
-  id       String  @id @default(uuid())
-  name     String
-  rating   Float?  @default(0.0)
-  owner    User?   @relation(fields: [ownerId], references: [id])
-  ownerId  String?
-}
-
-model Room {
   id          String    @id @default(uuid())
-  hotel       Hotel     @relation(fields: [hotelId], references: [id])
-  hotelId     String
-  roomNumber  String
-  type        String    // e.g., Single, Double, Suite
-  price       Float
-  available   Boolean   @default(true)
-  bookings    Booking[]
+  name        String
+  email       String    @unique
+  password    String
+  isOwner     Boolean   @default(false)
+  hotels      Hotel[]   // if user is an owner
+  bookings    Booking[] // if user is a customer
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 }
 
-model Payment {
-  id        String   @id @default(uuid())
-  booking   Booking? @relation(fields: [bookingId], references: [id])
-  bookingId String?
-  amount    Float
+// ======================
+// Hotel Model
+// ======================
+model Hotel {
+  id        String  @id @default(uuid())
+  name      String
+  location  String
+  description String?
+  rating    Float?  @default(0.0)
+  owner     User?   @relation(fields: [ownerId], references: [id])
+  ownerId   String?
+  rooms     Room[]  // hotel has many rooms
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
+// ======================
+// Room Model
+// ======================
+model Room {
+  id        String    @id @default(uuid())
+  hotel     Hotel     @relation(fields: [hotelId], references: [id])
+  hotelId   String
+  name      String
+  type      String
+  price     Float
+  capacity  Int
+  bookings  Booking[] // one room can have many bookings
+  available Boolean   @default(true)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+// ======================
+// Booking Model
+// ======================
 model Booking {
-  id       String    @id @default(uuid())
-  payments Payment[] // One-to-many
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  id         String    @id @default(uuid())
+  user       User      @relation(fields: [userId], references: [id])
+  userId     String
+  room       Room      @relation(fields: [roomId], references: [id])
+  roomId     String
+  startDate  DateTime
+  endDate    DateTime
+  status     String    @default("pending") // pending, confirmed, cancelled
+  payment    Payment?  // optional, link to payment
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
 }
 
-enum Role {
-  USER
-  ADMIN
-  HOTEL_OWNER
-}
-
-enum BookingStatus {
-  PENDING
-  CONFIRMED
-  CANCELLED
-}
-
-enum PaymentStatus {
-  PENDING
-  SUCCESS
-  FAILED
-}
-
-enum PaymentProvider {
-  PAYSTACK
-  FLUTTERWAVE
+// ======================
+// Payment Model
+// ======================
+model Payment {
+  id          String   @id @default(uuid())
+  booking     Booking  @relation(fields: [bookingId], references: [id])
+  bookingId   String   @unique
+  amount      Float
+  method      String   // e.g., Paystack, Flutterwave
+  status      String   @default("pending") // pending, successful, failed
+  transaction String?  // transaction reference
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
