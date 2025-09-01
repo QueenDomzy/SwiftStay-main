@@ -6,7 +6,8 @@
     "build": "tsc",
     "start": "node dist/index.js",
     "dev": "ts-node-dev src/index.ts",
-    "prebuild": "npx prisma generate"
+    "prebuild": "npx prisma generate",
+    "prestart": "npm run build"
   },
   "keywords": ["swiftstay", "backend", "nestjs", "typescript", "prisma"],
   "author": "QueenDomzy",
