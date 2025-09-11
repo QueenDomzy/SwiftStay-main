@@ -12,8 +12,11 @@ router.post("/", async (req: Request, res: Response) => {
     const booking = await prisma.booking.create({
       data: {
         userId,
+        roomId,
         hotelId,
         reservationId,
+        startDate: new Date(startDate)
+        endDate: new Date(endDate)
         status: "confirmed",
       },
     });
