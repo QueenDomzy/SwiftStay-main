@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ChatController } from './chat.controller';
 import { ChatService } from './chat.service';
-import { Configuration, OpenAIApi } from 'openai';
+import OpenAIApi from 'openai';
 
 @Module({
   controllers: [ChatController],
@@ -10,10 +10,10 @@ import { Configuration, OpenAIApi } from 'openai';
     {
       provide: OpenAIApi,
       useFactory: () => {
-        const configuration = new Configuration({
-          apiKey: process.env.OPENAI_API_KEY,
+        const openai = new OpenAI({
+        apiKey: process.env.OPENAI_API_KEY!,       
         });
-        return new OpenAIApi(configuration); // ✅ now passing the required argument
+        return new OpenAIApi; // ✅ now passing the required argument
       },
     },
   ],
