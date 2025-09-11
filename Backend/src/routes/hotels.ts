@@ -1,23 +1,47 @@
-import { Router } from "express";
+import { Router, Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
 
 const router = Router();
 const prisma = new PrismaClient();
 
-router.get("/", async (req, res) => {
-  const hotels = await prisma.hotel.findMany({ include: { rooms: true } });
-  res.json(hotels);
+// Get all hotels
+router.get("/", async (req: Request, res: Response) => {
+  try {
+    const hotels = await prisma.hotel.findMany();
+    res.json(hotels);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch hotels" });
+  }
 });
 
-router.post("/", async (req, res) => {
+// Get single hotel by ID
+router.get("/:id", async (req: Request, res: Response) => {
   try {
-    const { name, description, location, ownerId } = req.body;
-    const hotel = await prisma.hotel.create({
-      data: { name, description, location, ownerId },
-    });
+    const hotelId = Number(req.params.id);
+    const hotel = await prisma.hotel.findUnique({ where: { id: hotelId } });
+
+    if (!hotel) {
+      return res.status(404).json({ error: "Hotel not found" });
+    }
+
     res.json(hotel);
-  } catch (err: any) {
-    res.status(400).json({ error: err.message });
+  } catch (error) {
+    res.status(500).json({ error: "Error fetching hotel" });
+  }
+});
+
+// Create a new hotel
+router.post("/", async (req: Request, res: Response) => {
+  try {
+    const { name, location, price } = req.body;
+
+    const newHotel = await prisma.hotel.create({
+      data: { name, location, price }
+    });
+
+    res.status(201).json(newHotel);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to create hotel" });
   }
 });
 
