@@ -1,4 +1,4 @@
-import api from "./api";
+import { fetcher } from './api';
 import { AIResponse } from "../types/ai";
 
 export async function askAI(prompt: string): Promise<AIResponse> {
