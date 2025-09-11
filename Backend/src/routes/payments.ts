@@ -4,21 +4,26 @@ import { PrismaClient } from "@prisma/client";
 const router = Router();
 const prisma = new PrismaClient();
 
-// Create payment
+// Create payment for a booking
 router.post("/", async (req: Request, res: Response) => {
   try {
     const { bookingId, amount, method } = req.body;
 
-    if (!bookingId || !amount || !method) {
-      return res.status(400).json({ error: "bookingId, amount, and method are required" });
+    // Ensure booking exists
+    const booking = await prisma.booking.findUnique({
+      where: { id: bookingId },
+    });
+
+    if (!booking) {
+      return res.status(404).json({ error: "Booking not found" });
     }
 
     const payment = await prisma.payment.create({
       data: {
-        bookingId,         // ✅ required by schema
+        bookingId,
         amount,
         method,
-        status: "pending", // default until updated
+        status: "pending", // default
       },
     });
 
@@ -33,12 +38,37 @@ router.post("/", async (req: Request, res: Response) => {
 router.get("/", async (req: Request, res: Response) => {
   try {
     const payments = await prisma.payment.findMany({
-      include: { booking: true }, // optional: fetch related booking
+      include: {
+        booking: {
+          include: {
+            user: true,
+            room: true,
+          },
+        },
+      },
     });
     res.json(payments);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Failed to fetch payments" });
+  }
+});
+
+// Update payment status (e.g., after confirmation from Paystack/Flutterwave)
+router.patch("/:id/status", async (req: Request, res: Response) => {
+  try {
+    const { status } = req.body;
+    const { id } = req.params;
+
+    const updatedPayment = await prisma.payment.update({
+      where: { id },
+      data: { status },
+    });
+
+    res.json(updatedPayment);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Failed to update payment" });
   }
 });
 
