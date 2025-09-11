@@ -4,7 +4,6 @@ import jwt from "jsonwebtoken";
 import prisma from "../prisma";  // ✅ default import, not { prisma }
 
 const router = Router();
-const prisma = new PrismaClient();
 
 // Register
 router.post("/register", async (req: Request, res: Response) => {
