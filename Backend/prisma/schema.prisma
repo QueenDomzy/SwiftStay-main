@@ -1,72 +1,103 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL") // Render will inject DATABASE_URL automatically
+}
+
+// ======================
+// User Model
+// ======================
 model User {
-  id           String        @id @default(uuid())
-  email        String        @unique
-  password     String
-  name         String?
+  id        String      @id @default(uuid())
+  name      String
+  email     String      @unique
+  password  String
+  isOwner   Boolean     @default(false)
+  hotels    Hotel[]
+  bookings  Booking[]
   reservations Reservation[]
-  bookings     Booking[]
-  payments     Payment[]
-  createdAt    DateTime      @default(now())
-  updatedAt    DateTime      @updatedAt
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
 }
 
+// ======================
+// Hotel Model
+// ======================
 model Hotel {
-  id           String        @id @default(uuid())
-  name         String
-  location     String
-  description  String?
-  rating       Float         @default(0.0)
+  id          String        @id @default(uuid())
+  name        String
+  location    String
+  description String?
+  rating      Float?        @default(0.0)
+  ownerId     String?
+  owner       User?         @relation(fields: [ownerId], references: [id])
+  rooms       Room[]
   reservations Reservation[]
-  bookings     Booking[]
-  createdAt    DateTime      @default(now())
-  updatedAt    DateTime      @updatedAt
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
 }
 
+// ======================
+// Room Model
+// ======================
+model Room {
+  id        String    @id @default(uuid())
+  hotelId   String
+  hotel     Hotel     @relation(fields: [hotelId], references: [id])
+  name      String
+  type      String
+  price     Float
+  capacity  Int
+  bookings  Booking[]
+  available Boolean   @default(true)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+// ======================
+// Booking Model
+// ======================
+model Booking {
+  id         String    @id @default(uuid())
+  userId     String
+  user       User      @relation(fields: [userId], references: [id])
+  roomId     String
+  room       Room      @relation(fields: [roomId], references: [id])
+  startDate  DateTime
+  endDate    DateTime
+  status     String    @default("pending")
+  payment    Payment?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+}
+
+// ======================
+// Reservation Model
+// ======================
 model Reservation {
   id        String   @id @default(uuid())
   userId    String
+  user      User     @relation(fields: [userId], references: [id])
   hotelId   String
-  checkIn   DateTime
-  checkOut  DateTime
+  hotel     Hotel    @relation(fields: [hotelId], references: [id])
+  date      DateTime
   status    String   @default("pending")
-
-  // Relations
-  user   User   @relation(fields: [userId], references: [id])
-  hotel  Hotel  @relation(fields: [hotelId], references: [id])
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
 }
 
-model Booking {
+// ======================
+// Payment Model
+// ======================
+model Payment {
   id          String   @id @default(uuid())
-  userId      String
-  hotelId     String
-  reservationId String?
-  status      String   @default("confirmed")
-
-  // Relations
-  user        User        @relation(fields: [userId], references: [id])
-  hotel       Hotel       @relation(fields: [hotelId], references: [id])
-  reservation Reservation? @relation(fields: [reservationId], references: [id])
-  payments    Payment[]
-
+  bookingId   String   @unique
+  booking     Booking  @relation(fields: [bookingId], references: [id])
+  amount      Float
+  method      String
+  status      String   @default("pending")
+  transaction String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-}
-
-model Payment {
-  id        String   @id @default(uuid())
-  bookingId String
-  amount    Float
-  method    String
-  status    String   @default("pending")
-
-  // Relations
-  booking   Booking  @relation(fields: [bookingId], references: [id])
-  user      User?    @relation(fields: [userId], references: [id])
-
-  userId    String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
 }
