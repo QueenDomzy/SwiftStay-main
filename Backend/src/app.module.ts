@@ -1,13 +1,10 @@
-import { Module } from '@nestjs/common';
-import { ThrottlerModule } from '@nestjs/throttler';
-import { ChatModule } from './chat/chat.module';
+// src/app.module.ts
+import { Module } from "@nestjs/common";
+import { AppController } from "./app.controller";
 
 @Module({
-  imports: [
-    ThrottlerModule.forRoot([
-      { ttl: 60, limit: 60 }, // basic rate limit
-    ]),
-    ChatModule,
-  ],
+  imports: [],
+  controllers: [AppController],
+  providers: [],
 })
 export class AppModule {}
