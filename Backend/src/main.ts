@@ -5,8 +5,8 @@ import { AppModule } from "./app.module";
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  const port = process.env.PORT || 4000; // ✅ Use Render's provided PORT
-  await app.listen(port, "0.0.0.0");     // ✅ Bind to all interfaces
+  const port = parseInt(process.env.PORT || "4000", 10); // Render sets PORT
+  await app.listen(port, "0.0.0.0"); // ✅ Required on Render
 
   console.log(`🚀 Server running on port ${port}`);
 }
