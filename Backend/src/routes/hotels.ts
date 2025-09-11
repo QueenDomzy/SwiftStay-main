@@ -1,7 +1,6 @@
 import { Router, Request, Response } from "express";
 import prisma from "../prisma";  // ✅ default import, not { prisma }
 const router = Router();
-const prisma = new PrismaClient();
 
 // Get all hotels
 router.get("/", async (req: Request, res: Response) => {
