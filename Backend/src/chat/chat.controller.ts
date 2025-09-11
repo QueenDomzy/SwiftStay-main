@@ -1,19 +1,20 @@
-import { Router } from "express";
-import { ChatService } from "./chat.service";
-import { ChatDto } from "./chat.dto";
+import OpenAI from "openai";
 
-const router = Router();
-const chatService = new ChatService();
+export default class ChatController {
+  private openai: OpenAI;
 
-router.post("/", async (req, res) => {
-  const body: ChatDto = req.body;
-  try {
-    const response = await chatService.createChat(body.messages);
-    res.json(response);
-  } catch (err: any) {
-    res.status(500).json({ error: err.message });
+  constructor() {
+    this.openai = new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY!,
+    });
   }
-});
 
-export default router;
-export class ChatController { ... }
+  async handleMessage(message: string): Promise<string> {
+    const response = await this.openai.chat.completions.create({
+      model: "gpt-4o-mini",
+      messages: [{ role: "user", content: message }],
+    });
+
+    return response.choices[0].message?.content || "No response";
+  }
+}
