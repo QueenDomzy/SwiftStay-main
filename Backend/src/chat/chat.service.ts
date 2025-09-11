@@ -1,11 +1,20 @@
+// src/chat/chat.service.ts
+import { Injectable } from "@nestjs/common";
 import OpenAI from "openai";
 
-const openai = new OpenAI();
+@Injectable()
+export class ChatService {
+  private openai = new OpenAI();
 
-const completion = await openai.chat.completions.create({
-  model: "gpt-4o-mini",
-  messages: [
-    { role: "system", content: "You are a helpful assistant." },
-    { role: "user", content: "Hello!" },
-  ],
-});
+  async sendMessage(message: string, role: string = "user") {
+    const response = await this.openai.chat.completions.create({
+      model: "gpt-4o-mini",
+      messages: [
+        { role: "system", content: "You are a helpful assistant." },
+        { role, content: message },
+      ],
+    });
+
+    return response.choices[0].message;
+  }
+}
