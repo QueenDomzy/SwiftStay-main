@@ -31,7 +31,13 @@ router.post("/", async (req: Request, res: Response) => {
 router.get("/", async (_req: Request, res: Response) => {
   try {
     const bookings = await prisma.booking.findMany({
-      include: { user: true, hotel: true, reservation: true, payments: true },
+      include: { 
+        room: {
+          include: {
+            hotel: true,
+          },
+        },
+      },
     });
     res.json(bookings);
   } catch (error) {
