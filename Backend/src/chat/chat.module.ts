@@ -1,16 +1,21 @@
-import { Router, Request, Response } from "express";
-import ChatController from "./chat.controller";
+import { Module } from '@nestjs/common';
+import { ChatController } from './chat.controller';
+import { ChatService } from './chat.service';
+import { Configuration, OpenAIApi } from 'openai';
 
-// Express router used by index.ts
-const chatRoutes = Router();
-const controller = new ChatController();
-
-chatRoutes.post("/", (req: Request, res: Response) =>
-  controller.handleMessage(req, res)
-);
-
-// ✅ Export a no-op class so `app.module.ts` can import { ChatModule } without build errors
+@Module({
+  controllers: [ChatController],
+  providers: [
+    ChatService,
+    {
+      provide: OpenAIApi,
+      useFactory: () => {
+        const configuration = new Configuration({
+          apiKey: process.env.OPENAI_API_KEY,
+        });
+        return new OpenAIApi(configuration); // ✅ now passing the required argument
+      },
+    },
+  ],
+})
 export class ChatModule {}
-
-// Default export remains the Express router (used by index.ts)
-export default chatRoutes;
