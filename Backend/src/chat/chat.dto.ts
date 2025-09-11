@@ -1,7 +1,9 @@
-import { IsString, IsNotEmpty } from "class-validator";
+import { IsString } from "class-validator";
 
-export class ChatDto {
+export class ChatMessageDto {
   @IsString()
-  @IsNotEmpty()
-  message!: string;
+  role!: string;
+
+  @IsString()
+  content!: string;
 }
