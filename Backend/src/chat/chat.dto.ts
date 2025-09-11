@@ -1,9 +1,12 @@
-import { IsString } from "class-validator";
+// src/chat/chat.dto.ts
+import { IsString, IsNotEmpty, IsIn } from "class-validator";
 
 export class ChatDto {
   @IsString()
-  message!: string;  // add ! To tell TS it will be assigned
+  @IsNotEmpty()
+  message!: string;
 
   @IsString()
-  role!: string;
+  @IsIn(["user", "system", "assistant"])
+  role!: "user" | "system" | "assistant";
 }
