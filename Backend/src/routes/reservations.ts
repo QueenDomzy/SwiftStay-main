@@ -1,67 +1,31 @@
-// src/routes/reservations.ts
-import { Router } from "express";
-import prisma from "../utils/prismaClient";
+import { Router, Request, Response } from "express";
+import { PrismaClient } from "@prisma/client";
 
 const router = Router();
+const prisma = new PrismaClient();
 
-/**
- * Create a reservation.
- * Body: { name, email, date, userId? }
- * If userId is not provided we try to find or create a user by email.
- */
-router.post("/", async (req, res) => {
+// Create reservation
+router.post("/", async (req: Request, res: Response) => {
   try {
-    const { name, email, date, userId } = req.body;
-    if (!name || !email || !date) {
-      return res.status(400).json({ error: "Missing required fields" });
-    }
-
-    // Ensure a user exists (if userId not provided)
-    let userIdToUse = userId;
-    if (!userIdToUse) {
-      let user = await prisma.user.findUnique({ where: { email } });
-      if (!user) {
-        user = await prisma.user.create({
-          data: { name, email, password: "" } // password empty if using social/login later
-        });
-      }
-      userIdToUse = user.id;
-    }
+    const { userId, hotelId, checkIn, checkOut } = req.body;
 
     const reservation = await prisma.reservation.create({
-      data: {
-        userId: userIdToUse,
-        name,
-        email,
-        date: new Date(date),
-      },
-      include: { user: true }
+      data: { userId, hotelId, checkIn, checkOut }
     });
 
-    return res.status(201).json(reservation);
-  } catch (err: any) {
-    console.error("Create reservation error:", err);
-    return res.status(500).json({ error: err.message || "Server error" });
+    res.status(201).json(reservation);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to create reservation" });
   }
 });
 
-/**
- * Get all reservations (admin) or by user
- * Query: ?userId=...
- */
-router.get("/", async (req, res) => {
+// Get all reservations
+router.get("/", async (req: Request, res: Response) => {
   try {
-    const { userId } = req.query;
-    const where = userId ? { where: { userId: String(userId) } } : {};
-    const reservations = await prisma.reservation.findMany({
-      ...where,
-      include: { user: true },
-      orderBy: { id: "desc" }
-    });
-    return res.status(200).json(reservations);
-  } catch (err: any) {
-    console.error("Get reservations error:", err);
-    return res.status(500).json({ error: err.message || "Server error" });
+    const reservations = await prisma.reservation.findMany();
+    res.json(reservations);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch reservations" });
   }
 });
 
