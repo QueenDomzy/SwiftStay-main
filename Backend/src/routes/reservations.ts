@@ -13,8 +13,7 @@ router.post("/", async (req: Request, res: Response) => {
       data: {
         userId,
         hotelId,
-        checkIn: new Date(checkIn),
-        checkOut: new Date(checkOut),
+        date: new Date(req.body.date),
         status: "pending",
       },
     });
