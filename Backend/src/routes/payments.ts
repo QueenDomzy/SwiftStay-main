@@ -24,7 +24,6 @@ router.post("/", async (req: Request, res: Response) => {
         amount,
         method,
         status: "pending",
-        userId, // default
       },
     });
 
