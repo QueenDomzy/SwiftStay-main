@@ -6,7 +6,7 @@ import OpenAI from "openai";
 export class ChatService {
   private openai = new OpenAI();
 
-  async sendMessage(message: string, role: string = "user") {
+  async sendMessage(message: string, role: "user" | "system" | "assistant" = "user") {
     const response = await this.openai.chat.completions.create({
       model: "gpt-4o-mini",
       messages: [
