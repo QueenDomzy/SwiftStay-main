@@ -1,37 +1,34 @@
-import { Router, Request, Response } from "express";
-import { PrismaClient } from "@prisma/client";
+import { Router } from "express";
+import { prisma } from "../prisma";
 
 const router = Router();
-const prisma = new PrismaClient();
 
-// Create booking
-router.post("/", async (req: Request, res: Response) => {
+// Create a booking
+router.post("/", async (req, res) => {
   try {
-    const { userId, hotelId, reservationId } = req.body;
+    const { userId, roomId, startDate, endDate } = req.body;
 
     const booking = await prisma.booking.create({
       data: {
         userId,
         roomId,
-        hotelId,
-        reservationId,
-        startDate: new Date(startDate)
-        endDate: new Date(endDate)
-        status: "confirmed",
+        startDate: new Date(startDate),
+        endDate: new Date(endDate),
+        status: "pending",
       },
     });
 
-    res.status(201).json(booking);
-  } catch (error) {
-    res.status(500).json({ error: "Failed to create booking" });
+    res.json(booking);
+  } catch (err) {
+    res.status(400).json({ error: "Failed to create booking", details: err });
   }
 });
 
-// Get all bookings
-router.get("/", async (_req: Request, res: Response) => {
+// Get bookings with room + hotel info
+router.get("/", async (_req, res) => {
   try {
     const bookings = await prisma.booking.findMany({
-      include: { 
+      include: {
         room: {
           include: {
             hotel: true,
@@ -39,9 +36,10 @@ router.get("/", async (_req: Request, res: Response) => {
         },
       },
     });
+
     res.json(bookings);
-  } catch (error) {
-    res.status(500).json({ error: "Failed to fetch bookings" });
+  } catch (err) {
+    res.status(500).json({ error: "Failed to fetch bookings", details: err });
   }
 });
 
