@@ -1,7 +1,7 @@
-export function Button({ children, onClick, className }: { children: React.ReactNode; onClick?: () => void; className?: string }) {
-  return (
-    <button onClick={onClick} className={`px-4 py-2 rounded ${className}`}>
-      {children}
-    </button>
-  );
-      }
+export function Card({ children, className }: { children: React.ReactNode; className?: string }) {
+  return <div className={className}>{children}</div>;
+}
+
+export function CardContent({ children }: { children: React.ReactNode }) {
+  return <div className="p-4">{children}</div>;
+}
