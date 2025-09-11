@@ -1,5 +1,9 @@
-import OpenAI from "openai";
+// src/chat/chat.module.ts
+import { Module } from "@nestjs/common";
+import { ChatService } from "./chat.service";
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+@Module({
+  providers: [ChatService],
+  exports: [ChatService],
+})
+export class ChatModule {}
