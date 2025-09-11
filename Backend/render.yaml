@@ -7,8 +7,15 @@ services:
     plan: free
     branch: main
     envVars:
-      - key: DATABASE_URL
-        value: postgres://user:pass@host:5432/swiftstay
+      - key: DATABASE_URL 
+        fromDatabase:
+        name: swiftstaynigeria-postgress-project
+        property: connectionString
+
+   databases:
+        name: swiftstaynigeria-postgress-project
+        value: postgres://swiftstaynigeria_postgress_project_user:PwGcLmSkuidpYClO4A5uSa6qiCgm94r0@dpg-d2m9mupr0fns73dajte0-a:5432/swiftstaynigeria_postgress_project
+      
       - key: PAYSTACK_SECRET
         value: sk_test_xxxxx
       - key: FLUTTERWAVE_SECRET
