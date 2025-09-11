@@ -1,6 +1,5 @@
 import { Router } from "express";
-import { prisma } from "../prisma";
-
+import prisma from "../prisma";  // ✅ default import, not { prisma }
 const router = Router();
 
 // Create a booking
