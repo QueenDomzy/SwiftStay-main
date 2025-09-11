@@ -7,7 +7,9 @@ const prisma = new PrismaClient();
 // Get all hotels
 router.get("/", async (req: Request, res: Response) => {
   try {
-    const hotels = await prisma.hotel.findMany();
+    const hotels = await prisma.hotel.findMany({
+      include: { rooms: true, owner: true }, // optional: fetch related data
+    });
     res.json(hotels);
   } catch (error) {
     res.status(500).json({ error: "Failed to fetch hotels" });
@@ -17,8 +19,11 @@ router.get("/", async (req: Request, res: Response) => {
 // Get single hotel by ID
 router.get("/:id", async (req: Request, res: Response) => {
   try {
-    const hotelId = Number(req.params.id);
-    const hotel = await prisma.hotel.findUnique({ where: { id: hotelId } });
+    const hotelId = req.params.id; // ✅ id is String (uuid)
+    const hotel = await prisma.hotel.findUnique({
+      where: { id: hotelId },
+      include: { rooms: true, owner: true }, // optional
+    });
 
     if (!hotel) {
       return res.status(404).json({ error: "Hotel not found" });
@@ -33,10 +38,16 @@ router.get("/:id", async (req: Request, res: Response) => {
 // Create a new hotel
 router.post("/", async (req: Request, res: Response) => {
   try {
-    const { name, location, price } = req.body;
+    const { name, location, description, rating, ownerId } = req.body;
 
     const newHotel = await prisma.hotel.create({
-      data: { name, location, price }
+      data: {
+        name,
+        location,
+        description: description || null,
+        rating: rating ?? 0.0, // ✅ fallback
+        ownerId: ownerId || null, // ✅ optional owner
+      },
     });
 
     res.status(201).json(newHotel);
