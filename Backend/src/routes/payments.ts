@@ -7,7 +7,7 @@ const prisma = new PrismaClient();
 // Create payment for a booking
 router.post("/", async (req: Request, res: Response) => {
   try {
-    const { bookingId, amount, method } = req.body;
+    const { bookingId, amount, method, userId } = req.body;
 
     // Ensure booking exists
     const booking = await prisma.booking.findUnique({
@@ -23,7 +23,8 @@ router.post("/", async (req: Request, res: Response) => {
         bookingId,
         amount,
         method,
-        status: "pending", // default
+        status: "pending",
+        userId, // default
       },
     });
 
