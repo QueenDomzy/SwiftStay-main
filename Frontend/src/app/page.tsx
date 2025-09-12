@@ -1,11 +1,10 @@
+// src/app/dashboard/page.tsx
 "use client";
 
+import React, { useState, useEffect } from "react";
 import { Card, CardContent } from "../components/ui/card";
 import { Button } from "../components/ui/button";
-import { Bell, PlusCircle, Calendar, Home, DollarSign, Bed } from "lucide-react";
-import { motion } from "framer-motion";
-import Image from "next/image";
-import { useState, useEffect } from "react";
+import { Bell } from "lucide-react";
 
 type Transaction = {
   id: string;
@@ -13,13 +12,13 @@ type Transaction = {
   amount: number;
 };
 
-export default function HotelOwnerDashboard() {
+export default function DashboardPage() {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
 
   useEffect(() => {
     fetch("/api/transactions")
-      .then(res => res.json())
-      .then(data => setTransactions(data));
+      .then((res) => res.json())
+      .then((data) => setTransactions(data));
   }, []);
 
   // Paystack Payment
@@ -29,15 +28,15 @@ export default function HotelOwnerDashboard() {
       email: "customer@email.com",
       amount: 5000 * 100,
       currency: "NGN",
-      callback: function(response: any) {
+      callback: function (response: any) {
         fetch("/api/transactions", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ id: response.reference, method: "Paystack", amount: 5000 })
+          body: JSON.stringify({ id: response.reference, method: "Paystack", amount: 5000 }),
         }).then(() =>
-          setTransactions(prev => [...prev, { id: response.reference, method: "Paystack", amount: 5000 }])
+          setTransactions((prev) => [...prev, { id: response.reference, method: "Paystack", amount: 5000 }])
         );
-      }
+      },
     });
     handler.openIframe();
   };
@@ -55,11 +54,11 @@ export default function HotelOwnerDashboard() {
         fetch("/api/transactions", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ id: data.transaction_id, method: "Flutterwave", amount: 5000 })
+          body: JSON.stringify({ id: data.transaction_id, method: "Flutterwave", amount: 5000 }),
         }).then(() =>
-          setTransactions(prev => [...prev, { id: data.transaction_id, method: "Flutterwave", amount: 5000 }])
+          setTransactions((prev) => [...prev, { id: data.transaction_id, method: "Flutterwave", amount: 5000 }])
         );
-      }
+      },
     });
   };
 
@@ -68,7 +67,9 @@ export default function HotelOwnerDashboard() {
       {/* Header */}
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold text-gold">SwiftStay Dashboard</h1>
-        <Button className="bg-[#141820] text-gold"><Bell /></Button>
+        <Button className="bg-[#141820] text-gold">
+          <Bell />
+        </Button>
       </div>
 
       {/* KPI Cards */}
@@ -77,7 +78,7 @@ export default function HotelOwnerDashboard() {
           { label: "Bookings", value: "128" },
           { label: "Occupancy", value: "87%" },
           { label: "Revenue", value: "₦540k" },
-          { label: "Pending Payouts", value: "₦72k" }
+          { label: "Pending Payouts", value: "₦72k" },
         ].map((kpi, idx) => (
           <Card key={idx} className="bg-[#141820] shadow-lg rounded-2xl">
             <CardContent>
@@ -119,4 +120,4 @@ export default function HotelOwnerDashboard() {
       </Card>
     </div>
   );
-      }
+}
