@@ -1,36 +1,31 @@
-import { Router, Request, Response } from "express";
-import prisma from "../prisma";  // ✅ default import, not { prisma }
+import { Router } from "express";
+import { prisma } from "../lib/prisma";
+
 const router = Router();
 
-// Create reservation
-router.post("/", async (req: Request, res: Response) => {
-  try {
-    const { userId, hotelId, checkIn, checkOut } = req.body;
-
-    const reservation = await prisma.reservation.create({
-      data: {
-        userId,
-        hotelId,
-        date: new Date(req.body.date),
-        status: "pending",
-      },
-    });
-
-    res.status(201).json(reservation);
-  } catch (error) {
-    res.status(500).json({ error: "Failed to create reservation" });
-  }
-});
-
 // Get all reservations
-router.get("/", async (_req: Request, res: Response) => {
+router.get("/", async (req, res) => {
   try {
     const reservations = await prisma.reservation.findMany({
       include: { user: true, hotel: true },
+      orderBy: { date: "desc" }
     });
-    res.json(reservations);
-  } catch (error) {
+    res.json({ reservations });
+  } catch (err) {
     res.status(500).json({ error: "Failed to fetch reservations" });
+  }
+});
+
+// Create reservation
+router.post("/", async (req, res) => {
+  const { userId, hotelId, date } = req.body;
+  try {
+    const reservation = await prisma.reservation.create({
+      data: { userId, hotelId, date: new Date(date) }
+    });
+    res.json({ reservation });
+  } catch (err) {
+    res.status(500).json({ error: "Failed to create reservation" });
   }
 });
 
