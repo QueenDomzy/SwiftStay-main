@@ -1,7 +1,8 @@
+// src/lib/ai.ts
 import { api } from "./api";
 
-interface AIResponse {
-  answer: string;
+export interface AIResponse {
+  message: string;
 }
 
 export async function askAI(prompt: string): Promise<AIResponse> {
