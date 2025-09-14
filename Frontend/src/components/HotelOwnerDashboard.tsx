@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Card, CardContent } from "../components/ui/card";
-import { DollarSign, Bed, Calendar } from "lucide-react";
+import { NairSign, Bed, Calendar } from "lucide-react";
 import {
   LineChart,
   Line,
@@ -15,11 +15,26 @@ import {
 import { saveAs } from "file-saver";
 import { Parser } from "json2csv";
 
+type Booking = {
+  id: string;
+  customerName: string;
+  room: string;
+  amount: number;
+  createdAt: string;
+};
+
+type Transaction = {
+  id: string;
+  method: string;
+  amount: number;
+  createdAt: string;
+};
+
 export default function HotelOwnerDashboard() {
   const [activeRooms, setActiveRooms] = useState(0);
   const [totalRevenue, setTotalRevenue] = useState(0);
-  const [bookings, setBookings] = useState<any[]>([]);
-  const [transactions, setTransactions] = useState<any[]>([]);
+  const [bookings, setBookings] = useState<Booking[]>([]);
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [revenueTrend, setRevenueTrend] = useState<any[]>([]);
   const [bookingTrend, setBookingTrend] = useState<any[]>([]);
   const [startDate, setStartDate] = useState("");
@@ -43,7 +58,7 @@ export default function HotelOwnerDashboard() {
         setBookings(bookingsData.bookings);
         setTransactions(transactionsData.transactions);
 
-        // Generate last 7 days trend
+        // Last 7 days trend
         const today = new Date();
         const past7Days = Array.from({ length: 7 }).map((_, i) => {
           const d = new Date(today);
@@ -51,22 +66,23 @@ export default function HotelOwnerDashboard() {
           return d;
         }).reverse();
 
-        const revenueTrendData = past7Days.map(d => ({
-          date: d.toLocaleDateString("en-US", { month: "short", day: "numeric" }),
-          revenue: transactionsData.transactions
-            .filter(t => new Date(t.createdAt).toDateString() === d.toDateString())
-            .reduce((sum, t) => sum + t.amount, 0)
-        }));
+        setRevenueTrend(
+          past7Days.map(d => ({
+            date: d.toLocaleDateString("en-US", { month: "short", day: "numeric" }),
+            revenue: transactionsData.transactions
+              .filter(t => new Date(t.createdAt).toDateString() === d.toDateString())
+              .reduce((sum, t) => sum + t.amount, 0)
+          }))
+        );
 
-        const bookingTrendData = past7Days.map(d => ({
-          date: d.toLocaleDateString("en-US", { month: "short", day: "numeric" }),
-          bookings: bookingsData.bookings
-            .filter(b => new Date(b.createdAt).toDateString() === d.toDateString())
-            .length
-        }));
-
-        setRevenueTrend(revenueTrendData);
-        setBookingTrend(bookingTrendData);
+        setBookingTrend(
+          past7Days.map(d => ({
+            date: d.toLocaleDateString("en-US", { month: "short", day: "numeric" }),
+            bookings: bookingsData.bookings
+              .filter(b => new Date(b.createdAt).toDateString() === d.toDateString())
+              .length
+          }))
+        );
 
       } catch (err) {
         console.error("Dashboard fetch error:", err);
@@ -86,22 +102,12 @@ export default function HotelOwnerDashboard() {
     });
   };
 
-  const exportBookingsCSV = () => {
-    const filtered = filterByDateRange(bookings);
-    if (!filtered.length) return;
-    const parser = new Parser({ fields: ["id", "customerName", "room", "amount", "createdAt"] });
-    const csv = parser.parse(filtered);
+  const exportCSV = (data: any[], fields: string[], filename: string) => {
+    if (!data.length) return;
+    const parser = new Parser({ fields });
+    const csv = parser.parse(data);
     const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
-    saveAs(blob, `bookings_${Date.now()}.csv`);
-  };
-
-  const exportTransactionsCSV = () => {
-    const filtered = filterByDateRange(transactions);
-    if (!filtered.length) return;
-    const parser = new Parser({ fields: ["id", "method", "amount", "createdAt"] });
-    const csv = parser.parse(filtered);
-    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
-    saveAs(blob, `transactions_${Date.now()}.csv`);
+    saveAs(blob, `${filename}_${Date.now()}.csv`);
   };
 
   return (
@@ -139,7 +145,7 @@ export default function HotelOwnerDashboard() {
         </Card>
       </div>
 
-      {/* Date range filter */}
+      {/* Date filter & export buttons */}
       <div className="flex gap-4 items-end">
         <div>
           <label className="block text-gray-400 mb-1">Start Date</label>
@@ -151,12 +157,10 @@ export default function HotelOwnerDashboard() {
           <input type="date" value={endDate} onChange={e => setEndDate(e.target.value)}
                  className="px-2 py-1 rounded text-black"/>
         </div>
-        <button onClick={exportBookingsCSV} className="bg-blue-600 px-4 py-2 rounded hover:bg-blue-500 transition">
-          Export Bookings
-        </button>
-        <button onClick={exportTransactionsCSV} className="bg-green-600 px-4 py-2 rounded hover:bg-green-500 transition">
-          Export Transactions
-        </button>
+        <button onClick={() => exportCSV(filterByDateRange(bookings), ["id","customerName","room","amount","createdAt"], "bookings")}
+                className="bg-blue-600 px-4 py-2 rounded hover:bg-blue-500 transition">Export Bookings</button>
+        <button onClick={() => exportCSV(filterByDateRange(transactions), ["id","method","amount","createdAt"], "transactions")}
+                className="bg-green-600 px-4 py-2 rounded hover:bg-green-500 transition">Export Transactions</button>
       </div>
 
       {/* Revenue Trend */}
@@ -188,6 +192,41 @@ export default function HotelOwnerDashboard() {
           </LineChart>
         </ResponsiveContainer>
       </Card>
-    </div>
-  );
-}
+
+      {/* Recent Bookings Table */}
+      <Card className="bg-gray-800 p-4">
+        <h3 className="text-lg font-semibold mb-2">Recent Bookings</h3>
+        <div className="overflow-x-auto">
+          <table className="min-w-full table-auto border-collapse border border-gray-700">
+            <thead>
+              <tr className="bg-gray-900">
+                <th className="px-3 py-1 border border-gray-700">ID</th>
+                <th className="px-3 py-1 border border-gray-700">Customer</th>
+                <th className="px-3 py-1 border border-gray-700">Room</th>
+                <th className="px-3 py-1 border border-gray-700">Amount</th>
+                <th className="px-3 py-1 border border-gray-700">Date</th>
+              </tr>
+            </thead>
+            <tbody>
+              {bookings.slice(-5).reverse().map(b => (
+                <tr key={b.id}>
+                  <td className="px-3 py-1 border border-gray-700">{b.id}</td>
+                  <td className="px-3 py-1 border border-gray-700">{b.customerName}</td>
+                  <td className="px-3 py-1 border border-gray-700">{b.room}</td>
+                  <td className="px-3 py-1 border border-gray-700">₦{b.amount}</td>
+                  <td className="px-3 py-1 border border-gray-700">{new Date(b.createdAt).toLocaleDateString()}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </Card>
+
+      {/* Recent Transactions Table */}
+      <Card className="bg-gray-800 p-4">
+        <h3 className="text-lg font-semibold mb-2">Recent Transactions</h3>
+        <div className="overflow-x-auto">
+          <table className="min-w-full table-auto border-collapse border border-gray-700">
+            <thead>
+              <tr className="bg-gray-900">
+                <th className="px-3
