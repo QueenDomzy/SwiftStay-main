@@ -8,18 +8,26 @@ export default function ChatBox() {
 
   const sendMessage = async () => {
     if (!input) return;
-    setMessages([...messages, { role: "user", text: input }]);
+
+    // Add user message
+    setMessages(prev => [...prev, { role: "user", text: input }]);
     setInput("");
 
+    // Get AI response
     const res = await askAI(input);
-    setMessages(prev => [...prev, { role: "assistant", text: res.reply }]);
+
+    // Add AI message (use res.message instead of res.reply)
+    setMessages(prev => [...prev, { role: "assistant", text: res.message }]);
   };
 
   return (
     <div className="p-4 border rounded-lg w-full max-w-md mx-auto bg-white shadow-md">
       <div className="h-64 overflow-y-auto mb-3">
         {messages.map((m, i) => (
-          <p key={i} className={m.role === "user" ? "text-right text-blue-600" : "text-left text-gray-800"}>
+          <p
+            key={i}
+            className={m.role === "user" ? "text-right text-blue-600" : "text-left text-gray-800"}
+          >
             <strong>{m.role === "user" ? "You" : "AI"}:</strong> {m.text}
           </p>
         ))}
@@ -31,7 +39,10 @@ export default function ChatBox() {
           className="flex-1 border px-2 py-1 rounded"
           placeholder="Ask me anything..."
         />
-        <button onClick={sendMessage} className="bg-blue-600 text-white px-4 py-1 rounded">
+        <button
+          onClick={sendMessage}
+          className="bg-blue-600 text-white px-4 py-1 rounded"
+        >
           Send
         </button>
       </div>
