@@ -7,7 +7,7 @@ import authRoutes from "./routes/auth";
 import bookingsRoutes from "./routes/bookings";
 import flutterwaveRoutes from "./routes/flutterwave.routes";
 import paystackRoutes from "./routes/paystack.routes";
-import chatRoutes from "./routes/chat.routes";
+import chatRoutes from "./routes/chat";
 import dashboardRoutes from "./routes/dashboard";
 import hotelsRoutes from "./routes/hotels";
 import paymentsRoutes from "./routes/payments";
