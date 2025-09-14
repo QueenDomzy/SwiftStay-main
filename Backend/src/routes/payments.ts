@@ -27,10 +27,7 @@ router.post("/", async (req, res) => {
   } catch (err) {
     res.status(500).json({ error: "Failed to create reservation" });
   }
-});import { Router } from "express";
-import { prisma } from "../lib/prisma";
-
-const router = Router();
+});
 
 // Create payment
 router.post("/", async (req, res) => {
@@ -54,7 +51,5 @@ router.get("/", async (req, res) => {
     res.status(500).json({ error: "Failed to fetch payments" });
   }
 });
-
-export default router;
 
 export default router;
