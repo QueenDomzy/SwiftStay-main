@@ -1,5 +1,22 @@
-import { PrismaClient } from "@prisma/client";
+model Room {
+  id        Int       @id @default(autoincrement())
+  name      String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
 
-const prisma = new PrismaClient();
+model Reservation {
+  id          Int      @id @default(autoincrement())
+  customerName String
+  room        Room     @relation(fields: [roomId], references: [id])
+  roomId      Int
+  amount      Float
+  createdAt   DateTime @default(now())
+}
 
-export default prisma;
+model Transaction {
+  id        Int      @id @default(autoincrement())
+  method    String
+  amount    Float
+  createdAt DateTime @default(now())
+}
