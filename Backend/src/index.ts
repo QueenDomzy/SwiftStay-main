@@ -1,36 +1,44 @@
-import "reflect-metadata";
 import express from "express";
 import cors from "cors";
-import * as dotenv from "dotenv";
+import dotenv from "dotenv";
 
+// Import routes
 import authRoutes from "./routes/auth";
-import reservationRoutes from "./routes/reservations";
-import flutterwaveRoutes from "./routes/flutterwave.routes";
-import paystackRoutes from "./routes/paystack.routes";
-import chatRoutes from "./chat/chat.routes";
-import dashboardRoutes from "./routes/dashboard"; // ✅ move up
+import bookingsRoutes from "./routes/bookings";
+import flutterwaveRoutes from "./routes/Flutterwave.routes";
+import paystackRoutes from "./routes/Paystack.routes";
+import chatRoutes from "./routes/chat.routes";
+import dashboardRoutes from "./routes/dashboard";
+import hotelsRoutes from "./routes/hotels";
+import paymentsRoutes from "./routes/payments";
+import reservationsRoutes from "./routes/reservations";
 
-dotenv.config(); // Load env
+dotenv.config();
 
 const app = express();
+const PORT = process.env.PORT || 4000;
+
+// Middleware
 app.use(cors());
 app.use(express.json());
 
 // Routes
 app.use("/api/auth", authRoutes);
-app.use("/api/reservations", reservationRoutes);
-app.use("/flutterwave", flutterwaveRoutes);
-app.use("/paystack", paystackRoutes);
-app.use("/chat", chatRoutes);
-app.use("/api/dashboard", dashboardRoutes); // ✅ register before listen
+app.use("/api/bookings", bookingsRoutes);
+app.use("/api/flutterwave", flutterwaveRoutes);
+app.use("/api/paystack", paystackRoutes);
+app.use("/api/chat", chatRoutes);
+app.use("/api/dashboard", dashboardRoutes);
+app.use("/api/hotels", hotelsRoutes);
+app.use("/api/payments", paymentsRoutes);
+app.use("/api/reservations", reservationsRoutes);
 
-// Mock transactions endpoint (optional)
-app.get("/api/transactions", (req, res) => {
-  res.json([
-    { id: "1", method: "Paystack", amount: 5000 },
-    { id: "2", method: "Flutterwave", amount: 12000 }
-  ]);
+// Root route
+app.get("/", (req, res) => {
+  res.send("SwiftStay Backend is running 🚀");
 });
 
-const PORT = process.env.PORT || 4000;
-app.listen(PORT, () => console.log(`🚀 API running on port ${PORT}`));
+// Start server
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
