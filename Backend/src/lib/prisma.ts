@@ -19,8 +19,7 @@ router.get("/active-rooms", async (req, res) => {
 router.get("/revenue", async (req, res) => {
   try {
     const transactions = await prisma.transaction.findMany();
-    const totalRevenue = transactions.reduce((sum, t) => sum + t.amount, 0);
-    res.json({ totalRevenue });
+    const revenue = transactions.reduce((sum: number, t: { amount: number; createdAt: string }) => sum + t.amount, 0);    res.json({ totalRevenue });
   } catch (err) {
     res.status(500).json({ error: "Failed to fetch revenue" });
   }
