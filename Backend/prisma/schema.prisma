@@ -4,23 +4,23 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL") // Render will inject DATABASE_URL automatically
+  url      = env("DATABASE_URL")
 }
 
 // ======================
 // User Model
 // ======================
 model User {
-  id        String      @id @default(uuid())
-  name      String
-  email     String      @unique
-  password  String
-  isOwner   Boolean     @default(false)
-  hotels    Hotel[]
-  bookings  Booking[]
+  id           String        @id @default(uuid())
+  name         String
+  email        String        @unique
+  password     String
+  isOwner      Boolean       @default(false)
+  hotels       Hotel[]
+  bookings     Booking[]
   reservations Reservation[]
-  createdAt DateTime    @default(now())
-  updatedAt DateTime    @updatedAt
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
 }
 
 // ======================
@@ -51,8 +51,8 @@ model Room {
   type      String
   price     Float
   capacity  Int
-  bookings  Booking[]
   available Boolean   @default(true)
+  bookings  Booking[]
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
 }
@@ -85,6 +85,7 @@ model Reservation {
   hotel     Hotel    @relation(fields: [hotelId], references: [id])
   date      DateTime
   status    String   @default("pending")
+  createdAt DateTime @default(now())
 }
 
 // ======================
@@ -100,4 +101,14 @@ model Payment {
   transaction String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+}
+
+// ======================
+// Transaction Model
+// ======================
+model Transaction {
+  id        String   @id @default(uuid())
+  method    String
+  amount    Float
+  createdAt DateTime @default(now())
 }
