@@ -1,11 +1,6 @@
-import axios from "axios";
-
-interface AIResponse {
-  answer: string;
-}
+import { api } from "./api";
 
 export async function askAI(prompt: string): Promise<AIResponse> {
-  // Create an Axios instance or use directly
-  const res = await axios.post("/ai/ask", { prompt });
+  const res = await api.post("/ai/ask", { prompt });
   return res.data;
 }
