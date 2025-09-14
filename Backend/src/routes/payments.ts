@@ -1,73 +1,60 @@
-import { Router, Request, Response } from "express";
-import prisma from "../prisma";  // ✅ default import, not { prisma }
+import { Router } from "express";
+import { prisma } from "../lib/prisma";
+
 const router = Router();
 
-// Create payment for a booking
-router.post("/", async (req: Request, res: Response) => {
+// Get all reservations
+router.get("/", async (req, res) => {
   try {
-    const { bookingId, amount, method, userId } = req.body;
-
-    // Ensure booking exists
-    const booking = await prisma.booking.findUnique({
-      where: { id: bookingId },
+    const reservations = await prisma.reservation.findMany({
+      include: { user: true, hotel: true },
+      orderBy: { date: "desc" }
     });
+    res.json({ reservations });
+  } catch (err) {
+    res.status(500).json({ error: "Failed to fetch reservations" });
+  }
+});
 
-    if (!booking) {
-      return res.status(404).json({ error: "Booking not found" });
-    }
+// Create reservation
+router.post("/", async (req, res) => {
+  const { userId, hotelId, date } = req.body;
+  try {
+    const reservation = await prisma.reservation.create({
+      data: { userId, hotelId, date: new Date(date) }
+    });
+    res.json({ reservation });
+  } catch (err) {
+    res.status(500).json({ error: "Failed to create reservation" });
+  }
+});import { Router } from "express";
+import { prisma } from "../lib/prisma";
 
+const router = Router();
+
+// Create payment
+router.post("/", async (req, res) => {
+  const { bookingId, amount, method, status, transaction } = req.body;
+  try {
     const payment = await prisma.payment.create({
-      data: {
-        bookingId,
-        amount,
-        method,
-        status: "pending",
-      },
+      data: { bookingId, amount, method, status, transaction }
     });
-
-    res.status(201).json(payment);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Payment failed" });
+    res.json({ payment });
+  } catch (err) {
+    res.status(500).json({ error: "Failed to create payment" });
   }
 });
 
 // Get all payments
-router.get("/", async (req: Request, res: Response) => {
+router.get("/", async (req, res) => {
   try {
-    const payments = await prisma.payment.findMany({
-      include: {
-        booking: {
-          include: {
-            user: true,
-            room: true,
-          },
-        },
-      },
-    });
-    res.json(payments);
-  } catch (error) {
-    console.error(error);
+    const payments = await prisma.payment.findMany({ include: { booking: true } });
+    res.json({ payments });
+  } catch (err) {
     res.status(500).json({ error: "Failed to fetch payments" });
   }
 });
 
-// Update payment status (e.g., after confirmation from Paystack/Flutterwave)
-router.patch("/:id/status", async (req: Request, res: Response) => {
-  try {
-    const { status } = req.body;
-    const { id } = req.params;
-
-    const updatedPayment = await prisma.payment.update({
-      where: { id },
-      data: { status },
-    });
-
-    res.json(updatedPayment);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Failed to update payment" });
-  }
-});
+export default router;
 
 export default router;
