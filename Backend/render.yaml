@@ -7,21 +7,26 @@ services:
     plan: free
     branch: main
     envVars:
-      - key: DATABASE_URL 
+      - key: DATABASE_URL
         fromDatabase:
-        name: swiftstaynigeria-postgress-project
-        property: connectionString
-
-   databases:
-        name: swiftstaynigeria-postgress-project
-        value: postgres://swiftstaynigeria_postgress_project_user:PwGcLmSkuidpYClO4A5uSa6qiCgm94r0@dpg-d2m9mupr0fns73dajte0-a:5432/swiftstaynigeria_postgress_project
-      
+          name: swiftstaynigeria-postgress-project
+          property: connectionString
       - key: PAYSTACK_SECRET
         value: sk_test_xxxxx
       - key: FLUTTERWAVE_SECRET
         value: FLWSECK-xxxxx
-        # AI provider
-        AI_PROVIDER=openai
-        AI_API_KEY=replace_with_your_key
-        AI_API_BASE=
-        AI_MODEL=gpt-4o-min
+      - key: AI_PROVIDER
+        value: openai
+      - key: AI_API_KEY
+        value: replace_with_your_key
+      - key: AI_API_BASE
+        value: ""
+      - key: AI_MODEL
+        value: gpt-4o-mini
+      - key: NODE_ENV
+        value: development
+
+databases:
+  - name: swiftstaynigeria-postgress-project
+    databaseName: swiftstaynigeria_postgress_project
+    user: swiftstaynigeria_postgress_project_user
