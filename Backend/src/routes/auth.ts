@@ -1,53 +1,39 @@
-import { Router, Request, Response } from "express";
-import * as bcrypt from "bcryptjs";
+import { Router } from "express";
+import { prisma } from "../lib/prisma";
+import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import prisma from "../prisma";  // ✅ default import, not { prisma }
 
 const router = Router();
 
-// Register
-router.post("/register", async (req: Request, res: Response) => {
+// Register a user
+router.post("/register", async (req, res) => {
+  const { name, email, password, isOwner } = req.body;
   try {
-    const { name, email, password } = req.body;
-
-    if (!name || !email || !password) {
-      return res.status(400).json({ error: "Name, email, and password are required" });
-    }
-
-    // Check if user already exists
-    const existingUser = await prisma.user.findUnique({ where: { email } });
-    if (existingUser) {
-      return res.status(400).json({ error: "User already exists" });
-    }
-
     const hashedPassword = await bcrypt.hash(password, 10);
-
     const user = await prisma.user.create({
-      data: { name, email, password: hashedPassword },
+      data: { name, email, password: hashedPassword, isOwner }
     });
-
-    res.status(201).json({ message: "User registered successfully", user });
-  } catch (error) {
-    res.status(500).json({ error: "Registration failed" });
+    res.json(user);
+  } catch (err) {
+    res.status(500).json({ error: "Registration failed", details: err });
   }
 });
 
-// Login
-router.post("/login", async (req: Request, res: Response) => {
+// Login a user
+router.post("/login", async (req, res) => {
+  const { email, password } = req.body;
   try {
-    const { email, password } = req.body;
-
     const user = await prisma.user.findUnique({ where: { email } });
-    if (!user) return res.status(404).json({ error: "User not found" });
+    if (!user || !(await bcrypt.compare(password, user.password))) {
+      return res.status(401).json({ error: "Invalid credentials" });
+    }
 
-    const validPassword = await bcrypt.compare(password, user.password);
-    if (!validPassword) return res.status(401).json({ error: "Invalid credentials" });
-
-    const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET || "secret", { expiresIn: "1d" });
-
-    res.json({ message: "Login successful", token, user });
-  } catch (error) {
-    res.status(500).json({ error: "Login failed" });
+    const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET || "secret", {
+      expiresIn: "7d"
+    });
+    res.json({ token, user });
+  } catch (err) {
+    res.status(500).json({ error: "Login failed", details: err });
   }
 });
 
