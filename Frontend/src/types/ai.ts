@@ -1,4 +1,4 @@
+// src/types/ai.ts
 export interface AIResponse {
-      reply: string;
-      }
+  message: string;
 }
