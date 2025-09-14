@@ -5,8 +5,8 @@ import dotenv from "dotenv";
 // Import routes
 import authRoutes from "./routes/auth";
 import bookingsRoutes from "./routes/bookings";
-import flutterwaveRoutes from "./routes/Flutterwave.routes";
-import paystackRoutes from "./routes/Paystack.routes";
+import flutterwaveRoutes from "./routes/flutterwave.routes";
+import paystackRoutes from "./routes/paystack.routes";
 import chatRoutes from "./routes/chat.routes";
 import dashboardRoutes from "./routes/dashboard";
 import hotelsRoutes from "./routes/hotels";
