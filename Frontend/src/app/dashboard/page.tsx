@@ -11,13 +11,19 @@ type Transaction = {
 
 export default function Dashboard() {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Dummy fetch for now (replace with your API later)
-    setTransactions([
-      { id: "1", method: "Paystack", amount: 5000 },
-      { id: "2", method: "Flutterwave", amount: 10000 },
-    ]);
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/transactions`)
+      .then((res) => res.json())
+      .then((data) => {
+        setTransactions(data);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error("Failed to load transactions:", err);
+        setLoading(false);
+      });
   }, []);
 
   return (
@@ -37,15 +43,18 @@ export default function Dashboard() {
           <DollarSign className="w-8 h-8 text-green-400" />
           <div>
             <p className="text-sm">Total Revenue</p>
-            <p className="text-xl font-bold">₦15,000</p>
+            <p className="text-xl font-bold">
+              ₦
+              {transactions.reduce((sum, t) => sum + t.amount, 0).toLocaleString()}
+            </p>
           </div>
         </div>
 
         <div className="p-6 bg-gray-800 rounded-xl shadow-md flex items-center gap-4">
           <Calendar className="w-8 h-8 text-yellow-400" />
           <div>
-            <p className="text-sm">Upcoming Bookings</p>
-            <p className="text-xl font-bold">5</p>
+            <p className="text-sm">Recent Bookings</p>
+            <p className="text-xl font-bold">{transactions.length}</p>
           </div>
         </div>
       </div>
@@ -53,12 +62,18 @@ export default function Dashboard() {
       <div>
         <h2 className="text-lg font-semibold mb-2">Recent Transactions</h2>
         <div className="bg-gray-800 rounded-xl p-4 space-y-2">
-          {transactions.map((t) => (
-            <p key={t.id} className="flex justify-between">
-              <span>{t.method}</span>
-              <span>₦{t.amount}</span>
-            </p>
-          ))}
+          {loading ? (
+            <p>Loading...</p>
+          ) : transactions.length > 0 ? (
+            transactions.map((t) => (
+              <p key={t.id} className="flex justify-between">
+                <span>{t.method}</span>
+                <span>₦{t.amount.toLocaleString()}</span>
+              </p>
+            ))
+          ) : (
+            <p>No transactions yet.</p>
+          )}
         </div>
       </div>
     </div>
