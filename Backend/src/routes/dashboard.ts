@@ -1,40 +1,39 @@
 import { Router } from "express";
-import prisma from "../prisma"; // if you use Prisma
+import { prisma } from "../lib/prisma";
 
 const router = Router();
 
-// Active rooms
+// Active rooms count
 router.get("/active-rooms", async (req, res) => {
   try {
-    const activeRooms = await prisma.room.count({ where: { status: "active" } });
-    res.json({ activeRooms });
-  } catch (error) {
-    res.status(500).json({ error: "Failed to fetch active rooms" });
+    const count = await prisma.room.count({ where: { available: true } });
+    res.json({ activeRooms: count });
+  } catch (err) {
+    res.status(500).json({ error: "Failed to get active rooms" });
   }
 });
 
 // Total revenue
 router.get("/revenue", async (req, res) => {
   try {
-    const revenue = await prisma.payment.aggregate({
-      _sum: { amount: true }
-    });
-    res.json({ totalRevenue: revenue._sum.amount || 0 });
-  } catch (error) {
-    res.status(500).json({ error: "Failed to fetch revenue" });
+    const transactions = await prisma.payment.findMany();
+    const totalRevenue = transactions.reduce((sum, t) => sum + t.amount, 0);
+    res.json({ totalRevenue });
+  } catch (err) {
+    res.status(500).json({ error: "Failed to get revenue" });
   }
 });
 
 // Recent bookings
 router.get("/bookings", async (req, res) => {
   try {
-    const bookings = await prisma.reservation.findMany({
+    const bookings = await prisma.booking.findMany({
       orderBy: { createdAt: "desc" },
-      take: 5
+      include: { user: true, room: true }
     });
     res.json({ bookings });
-  } catch (error) {
-    res.status(500).json({ error: "Failed to fetch bookings" });
+  } catch (err) {
+    res.status(500).json({ error: "Failed to get bookings" });
   }
 });
 
@@ -42,12 +41,11 @@ router.get("/bookings", async (req, res) => {
 router.get("/transactions", async (req, res) => {
   try {
     const transactions = await prisma.payment.findMany({
-      orderBy: { createdAt: "desc" },
-      take: 5
+      orderBy: { createdAt: "desc" }
     });
     res.json({ transactions });
-  } catch (error) {
-    res.status(500).json({ error: "Failed to fetch transactions" });
+  } catch (err) {
+    res.status(500).json({ error: "Failed to get transactions" });
   }
 });
 
