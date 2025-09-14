@@ -1,7 +1,10 @@
-import '../styles/globals.css';
-export const metadata = {
-  title: 'SwiftStay Dashboard',
-  description: 'Hotel Owner Dashboard',
+import "./globals.css";
+import type { Metadata } from "next";
+import Navbar from "../components/Navbar";
+
+export const metadata: Metadata = {
+  title: "SwiftStay",
+  description: "Hotel reservation and management system",
 };
 
 export default function RootLayout({
@@ -11,7 +14,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <Navbar />
+        <div className="p-4">{children}</div>
+      </body>
     </html>
   );
 }
