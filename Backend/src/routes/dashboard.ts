@@ -3,6 +3,7 @@ import prisma from "../lib/prisma";
 
 const router = Router();
 
+// Type for payments
 type Transaction = {
   id: string;
   createdAt: Date;
@@ -14,28 +15,34 @@ type Transaction = {
   bookingId: string;
 };
 
+// Total active rooms
+router.get("/active-rooms", async (req, res) => {
+  try {
+    const activeRooms = await prisma.room.count({ where: { available: true } });
+    res.json({ activeRooms });
+  } catch (err) {
+    res.status(500).json({ error: "Failed to get active rooms", details: err });
+  }
+});
+
 // Total revenue
 router.get("/revenue", async (req, res) => {
   try {
-    const transactions: Transaction[] = await prisma.payment.findMany();
-
-    const totalRevenue = transactions.reduce(
-      (sum: number, t: Transaction) => sum + t.amount,
-      0
-    );
-
+    const payments: Transaction[] = await prisma.payment.findMany();
+    const totalRevenue = payments.reduce((sum, t) => sum + t.amount, 0);
     res.json({ totalRevenue });
   } catch (err) {
     res.status(500).json({ error: "Failed to get revenue", details: err });
   }
 });
 
-// Booking trends (past 7 days)
+// Booking trends for past 7 days
 router.get("/booking-trends", async (req, res) => {
   try {
     const bookings = await prisma.booking.findMany();
 
-    const past7Days = Array.from({ length: 7 }, (_, i) => {
+    // Generate past 7 days
+    const past7Days: Date[] = Array.from({ length: 7 }, (_, i) => {
       const d = new Date();
       d.setDate(d.getDate() - i);
       return d;
@@ -45,7 +52,7 @@ router.get("/booking-trends", async (req, res) => {
       date: d.toLocaleDateString("en-US", { month: "short", day: "numeric" }),
       bookings: bookings.filter(
         (b) =>
-          b.createdAt.toDateString() === d.toDateString() // compare Date objects
+          b.createdAt.toDateString() === d.toDateString()
       ).length,
     }));
 
