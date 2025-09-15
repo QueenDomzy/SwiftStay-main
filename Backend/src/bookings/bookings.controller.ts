@@ -3,22 +3,20 @@ import { Controller, Get, Post, Body, Param } from '@nestjs/common';
 import { BookingsService } from './bookings.service';
 import { Booking } from './booking.entity';
 
-@Controller('bookings')
+@Controller('hotels/:hotelId/bookings')
 export class BookingsController {
   constructor(private readonly bookingsService: BookingsService) {}
 
   @Get()
-  getAllBookings(): Promise<Booking[]> {
-    return this.bookingsService.findAll();
-  }
-
-  @Get(':id')
-  getBookingById(@Param('id') id: string): Promise<Booking | null> {
-    return this.bookingsService.findOne(id);
+  getAll(@Param('hotelId') hotelId: string): Promise<Booking[]> {
+    return this.bookingsService.findAllByHotel(hotelId);
   }
 
   @Post()
-  createBooking(@Body() newBooking: Partial<Booking>): Promise<Booking> {
-    return this.bookingsService.create(newBooking);
+  create(
+    @Param('hotelId') hotelId: string,
+    @Body() bookingData: Partial<Booking>,
+  ): Promise<Booking> {
+    return this.bookingsService.createForHotel(hotelId, bookingData);
   }
 }
