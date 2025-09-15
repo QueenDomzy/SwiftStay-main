@@ -1,6 +1,8 @@
+// src/app.module.ts
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { BookingsModule } from './bookings/bookings.module'; // 👈 import your feature module
 
 @Module({
   imports: [
@@ -14,6 +16,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
         synchronize: true,
       }),
     }),
+    BookingsModule, // 👈 register here
   ],
 })
 export class AppModule {}
