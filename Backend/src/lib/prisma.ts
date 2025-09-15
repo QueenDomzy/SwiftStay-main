@@ -1,11 +1,15 @@
 import { PrismaClient } from "@prisma/client";
 
-// Initialize a single Prisma client instance
-const prisma = new PrismaClient();
+declare global {
+  // Allows globalThis.prisma without TypeScript errors
+  // eslint-disable-next-line no-var
+  var prisma: PrismaClient | undefined;
+}
 
-// Optional: Graceful shutdown for serverless environments
+const prisma = globalThis.prisma || new PrismaClient();
+
 if (process.env.NODE_ENV !== "production") {
-  globalThis.prisma = globalThis.prisma || prisma;
+  globalThis.prisma = prisma;
 }
 
 export default prisma;
