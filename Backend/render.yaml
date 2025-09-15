@@ -30,3 +30,5 @@ databases:
   - name: swiftstaynigeria-postgress-project
     databaseName: swiftstaynigeria_postgress_project
     user: swiftstaynigeria_postgress_project_user
+
+DATABASE_URL=postgresql://<user>:<password>@<host>:5432/<dbname>
