@@ -1,10 +1,14 @@
 // src/bookings/bookings.module.ts
 import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { Booking } from './booking.entity';
 import { BookingsController } from './bookings.controller';
-import { PrismaService } from '../prisma.service';
+import { BookingsService } from './bookings.service';
 
 @Module({
+  imports: [TypeOrmModule.forFeature([Booking])],
   controllers: [BookingsController],
-  providers: [PrismaService],
+  providers: [BookingsService],
+  exports: [BookingsService], // ✅ useful if other modules need BookingsService
 })
 export class BookingsModule {}
