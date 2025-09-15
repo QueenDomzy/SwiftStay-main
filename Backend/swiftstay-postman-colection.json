@@ -1,0 +1,92 @@
+{
+  "info": {
+    "name": "SwiftStay Multi-Hotel API",
+    "_postman_id": "swiftstay-multihotel",
+    "description": "Endpoints for SwiftStay backend supporting multiple hotels and bookings",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "List Hotels",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{BASE_URL}}/api/hotels",
+          "host": ["{{BASE_URL}}"],
+          "path": ["api","hotels"]
+        }
+      }
+    },
+    {
+      "name": "Create Hotel",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"SwiftStay Lagos\",\n  \"location\": \"Victoria Island\"\n}"
+        },
+        "url": {
+          "raw": "{{BASE_URL}}/api/hotels",
+          "host": ["{{BASE_URL}}"],
+          "path": ["api","hotels"]
+        }
+      }
+    },
+    {
+      "name": "Get Hotel By ID",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{BASE_URL}}/api/hotels/:hotelId",
+          "host": ["{{BASE_URL}}"],
+          "path": ["api","hotels",":hotelId"]
+        }
+      }
+    },
+    {
+      "name": "List Bookings For Hotel",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{BASE_URL}}/api/hotels/:hotelId/bookings",
+          "host": ["{{BASE_URL}}"],
+          "path": ["api","hotels",":hotelId","bookings"]
+        }
+      }
+    },
+    {
+      "name": "Create Booking For Hotel",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"guestName\": \"Jane Doe\",\n  \"checkInDate\": \"2025-09-20\",\n  \"checkOutDate\": \"2025-09-23\"\n}"
+        },
+        "url": {
+          "raw": "{{BASE_URL}}/api/hotels/:hotelId/bookings",
+          "host": ["{{BASE_URL}}"],
+          "path": ["api","hotels",":hotelId","bookings"]
+        }
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "BASE_URL",
+      "value": "https://swiftstay-main.onrender.com"
+    },
+    {
+      "key": "hotelId",
+      "value": "1"
+    }
+  ]
+    }
