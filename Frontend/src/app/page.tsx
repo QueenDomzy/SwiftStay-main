@@ -19,7 +19,7 @@ export default function HomePage() {
   useEffect(() => {
     async function fetchBookings() {
       try {
-        const res = await fetch("https://your-backend-url.com/api/bookings"); // Replace with your backend URL
+        const res = await fetch("https://swiftstay-main-h766.onrender.com/api/bookings"); // Replace with your backend URL
         if (!res.ok) throw new Error("Failed to fetch bookings");
         const data: Booking[] = await res.json();
         setBookings(data);
