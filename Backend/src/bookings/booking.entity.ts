@@ -1,21 +1,20 @@
-// src/bookings/booking.entity.ts
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
 import { Hotel } from '../hotels/hotel.entity';
 
 @Entity()
 export class Booking {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id!: string;
 
   @Column()
-  guestName: string;
+  guestName!: string;
 
   @Column()
-  checkInDate: Date;
+  checkInDate!: Date;
 
   @Column()
-  checkOutDate: Date;
+  checkOutDate!: Date;
 
   @ManyToOne(() => Hotel, hotel => hotel.bookings, { onDelete: 'CASCADE' })
-  hotel: Hotel;
+  hotel!: Hotel;
 }
