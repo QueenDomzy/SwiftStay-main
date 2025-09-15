@@ -223,10 +223,28 @@ export default function HotelOwnerDashboard() {
       </Card>
 
       {/* Recent Transactions Table */}
-      <Card className="bg-gray-800 p-4">
-        <h3 className="text-lg font-semibold mb-2">Recent Transactions</h3>
-        <div className="overflow-x-auto">
-          <table className="min-w-full table-auto border-collapse border border-gray-700">
-            <thead>
-              <tr className="bg-gray-900">
-                <th className="px-3
+<Card className="bg-gray-800 p-4">
+  <h3 className="text-lg font-semibold mb-2">Recent Transactions</h3>
+  <div className="overflow-x-auto">
+    <table className="min-w-full table-auto border-collapse border border-gray-700">
+      <thead>
+        <tr className="bg-gray-900">
+          <th className="px-3 py-1 border border-gray-700">ID</th>
+          <th className="px-3 py-1 border border-gray-700">Method</th>
+          <th className="px-3 py-1 border border-gray-700">Amount</th>
+          <th className="px-3 py-1 border border-gray-700">Date</th>
+        </tr>
+      </thead>
+      <tbody>
+        {transactions.slice(-5).reverse().map(t => (
+          <tr key={t.id}>
+            <td className="px-3 py-1 border border-gray-700">{t.id}</td>
+            <td className="px-3 py-1 border border-gray-700">{t.method}</td>
+            <td className="px-3 py-1 border border-gray-700">₦{t.amount}</td>
+            <td className="px-3 py-1 border border-gray-700">{new Date(t.createdAt).toLocaleDateString()}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+</Card>
