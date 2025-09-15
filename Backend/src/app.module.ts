@@ -1,22 +1,17 @@
-// src/app.module.ts
-import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { BookingsModule } from './bookings/bookings.module';
-import { Booking } from './bookings/booking.entity';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 
 @Module({
   imports: [
-    TypeOrmModule.forRoot({
-      type: 'postgres',
-      host: process.env.DB_HOST || 'localhost',
-      port: parseInt(process.env.DB_PORT) || 5432,
-      username: process.env.DB_USER || 'postgres',
-      password: process.env.DB_PASS || 'password',
-      database: process.env.DB_NAME || 'swiftstay',
-      entities: [Booking],
-      synchronize: true, // ⚠️ Auto creates tables (safe for dev, turn off in prod)
+    ConfigModule.forRoot({ isGlobal: true }),
+    TypeOrmModule.forRootAsync({
+      inject: [ConfigService],
+      useFactory: (config: ConfigService) => ({
+        type: 'postgres',
+        url: config.get<string>('DATABASE_URL'),
+        autoLoadEntities: true,
+        synchronize: true,
+      }),
     }),
-    BookingsModule,
   ],
 })
 export class AppModule {}
