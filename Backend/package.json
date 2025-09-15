@@ -4,11 +4,11 @@
   "description": "Backend for SwiftStay Nigeria",
   "main": "dist/main.js",
   "scripts": {
+    "prebuild": "npx prisma generate",
     "build": "tsc",
     "start": "node dist/main.js",
     "start:prod": "node dist/main.js",
-    "start:dev": "ts-node-dev --respawn --transpile-only src/main.ts",
-    "prebuild": "npx prisma generate"
+    "start:dev": "ts-node-dev --respawn --transpile-only src/main.ts"
   },
   "dependencies": {
     "@nestjs/common": "^10.0.0",
