@@ -12,8 +12,8 @@
         "method": "GET",
         "header": [],
         "url": {
-          "raw": "{{BASE_URL}}/api/hotels",
-          "host": ["{{BASE_URL}}"],
+          "raw": "{{https://swiftstay-main.onrender.com}/api/hotels",
+          "host": ["{{https://swiftstay-main.onrender.com}}"],
           "path": ["api","hotels"]
         }
       }
@@ -30,8 +30,8 @@
           "raw": "{\n  \"name\": \"SwiftStay Lagos\",\n  \"location\": \"Victoria Island\"\n}"
         },
         "url": {
-          "raw": "{{BASE_URL}}/api/hotels",
-          "host": ["{{BASE_URL}}"],
+          "raw": "{{https://swiftstay-main.onrender.com}}/api/hotels",
+          "host": ["{{https://swiftstay-main.onrender.com}}"],
           "path": ["api","hotels"]
         }
       }
@@ -42,8 +42,8 @@
         "method": "GET",
         "header": [],
         "url": {
-          "raw": "{{BASE_URL}}/api/hotels/:hotelId",
-          "host": ["{{BASE_URL}}"],
+          "raw": "{{https://swiftstay-main.onrender.com}}/api/hotels/:hotelId",
+          "host": ["{{https://swiftstay-main.onrender.com}}"],
           "path": ["api","hotels",":hotelId"]
         }
       }
@@ -54,8 +54,8 @@
         "method": "GET",
         "header": [],
         "url": {
-          "raw": "{{BASE_URL}}/api/hotels/:hotelId/bookings",
-          "host": ["{{BASE_URL}}"],
+          "raw": "{{https://swiftstay-main.onrender.com}}/api/hotels/:hotelId/bookings",
+          "host": ["{{https://swiftstay-main.onrender.com}}"],
           "path": ["api","hotels",":hotelId","bookings"]
         }
       }
@@ -72,8 +72,8 @@
           "raw": "{\n  \"guestName\": \"Jane Doe\",\n  \"checkInDate\": \"2025-09-20\",\n  \"checkOutDate\": \"2025-09-23\"\n}"
         },
         "url": {
-          "raw": "{{BASE_URL}}/api/hotels/:hotelId/bookings",
-          "host": ["{{BASE_URL}}"],
+          "raw": "{{https://swiftstay-main.onrender.com}}/api/hotels/:hotelId/bookings",
+          "host": ["{{https://swiftstay-main.onrender.com}}"],
           "path": ["api","hotels",":hotelId","bookings"]
         }
       }
