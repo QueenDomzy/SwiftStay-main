@@ -1,20 +1,25 @@
+// backend/index.ts
 import express from "express";
 import cors from "cors";
 import bookingRoutes from "./routes/bookings"; // adjust path if needed
 
 const app = express();
 
-app.use(cors());            // allow frontend requests
-app.use(express.json());    // parse JSON bodies
+// Enable CORS so frontend can fetch data
+app.use(cors());
 
-// Mount the bookings router at /api/bookings
+// Parse JSON bodies
+app.use(express.json());
+
+// Mount bookings router at /api/bookings
 app.use("/api/bookings", bookingRoutes);
 
-// Optional: root route
+// Root route for testing backend status
 app.get("/", (req, res) => {
   res.json({ message: "🚀 SwiftStay Backend is running!" });
 });
 
+// Start server
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
