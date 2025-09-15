@@ -1,21 +1,14 @@
+// src/bookings/bookings.module.ts
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { BookingsModule } from './bookings/bookings.module';
-import { Booking } from './bookings/booking.entity';
+import { Booking } from './booking.entity';
+import { BookingsService } from './bookings.service';
+import { BookingsController } from './bookings.controller';
 
 @Module({
-  imports: [
-    TypeOrmModule.forRoot({
-      type: 'postgres',
-      host: process.env.DB_HOST || 'localhost',
-      port: parseInt(process.env.DB_PORT || '5432', 10),
-      username: process.env.DB_USER || 'postgres',
-      password: process.env.DB_PASS || 'password',
-      database: process.env.DB_NAME || 'swiftstay',
-      entities: [Booking],
-      synchronize: true, // ⚠️ Only for dev! Disable in production
-    }),
-    BookingsModule,
-  ],
+  imports: [TypeOrmModule.forFeature([Booking])],
+  providers: [BookingsService],
+  controllers: [BookingsController],
+  exports: [BookingsService], // ✅ export if another module needs it
 })
-export class AppModule {}
+export class BookingsModule {}
