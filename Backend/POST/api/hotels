@@ -1,0 +1,8 @@
+POST /api/hotels
+Content-Type: application/json
+
+{
+  "name": "SwiftStay Lagos",
+  "location": "Lagos, Nigeria",
+  "description": "Luxury suites in Victoria Island"
+  }
