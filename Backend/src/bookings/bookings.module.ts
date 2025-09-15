@@ -1,4 +1,3 @@
-// src/bookings/bookings.module.ts
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Booking } from './booking.entity';
@@ -9,6 +8,6 @@ import { BookingsController } from './bookings.controller';
   imports: [TypeOrmModule.forFeature([Booking])],
   providers: [BookingsService],
   controllers: [BookingsController],
-  exports: [BookingsService], // ✅ export if another module needs it
+  exports: [BookingsService], // ✅ ensure it's exported if used elsewhere
 })
 export class BookingsModule {}
