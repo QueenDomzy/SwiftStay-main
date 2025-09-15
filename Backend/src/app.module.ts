@@ -1,10 +1,8 @@
 // src/app.module.ts
-import { Module } from "@nestjs/common";
-import { AppController } from "./app.controller";
+import { Module } from '@nestjs/common';
+import { BookingsModule } from './bookings/bookings.module';
 
 @Module({
-  imports: [],
-  controllers: [AppController],
-  providers: [],
+  imports: [BookingsModule],
 })
 export class AppModule {}
