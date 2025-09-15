@@ -5,8 +5,10 @@ import { AppModule } from "./app.module";
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  const port = parseInt(process.env.PORT || "4000", 10); // Render sets PORT
-  await app.listen(port, "0.0.0.0"); // ✅ Required on Render
+  app.setGlobalPrefix("api"); // 👈 this makes all routes start with /api
+
+  const port = parseInt(process.env.PORT || "4000", 10);
+  await app.listen(port, "0.0.0.0");
 
   console.log(`🚀 Server running on port ${port}`);
 }
