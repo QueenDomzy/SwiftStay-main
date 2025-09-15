@@ -1,11 +1,13 @@
+import { ReactNode, HTMLAttributes } from "react";
+
 interface CardProps extends HTMLAttributes<HTMLDivElement> {
   children: ReactNode;
 }
 
-export function Card({ children, className, ...props }: CardProps) {
+export function BookingCard({ children, className, ...props }: CardProps) {
   return (
-    <div className={`rounded-lg shadow-md ${className || ""}`} {...props}>
+    <div className={`p-4 bg-gray-800 rounded-lg ${className || ""}`} {...props}>
       {children}
     </div>
   );
-      }
+}
