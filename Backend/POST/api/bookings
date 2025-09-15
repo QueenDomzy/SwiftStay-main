@@ -1,0 +1,10 @@
+POST /api/bookings
+Content-Type: application/json
+
+{
+  "guestName": "Jane Doe",
+  "roomNumber": 202,
+  "checkInDate": "2025-09-20",
+  "checkOutDate": "2025-09-23",
+  "hotel": { "id": 1 }
+}
