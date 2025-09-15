@@ -2,7 +2,8 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { BookingsModule } from './bookings/bookings.module'; // 👈 import your feature module
+import { HotelsModule } from './hotels/hotels.module';
+import { BookingsModule } from './bookings/bookings.module';
 
 @Module({
   imports: [
@@ -16,7 +17,8 @@ import { BookingsModule } from './bookings/bookings.module'; // 👈 import your
         synchronize: true,
       }),
     }),
-    BookingsModule, // 👈 register here
+    HotelsModule,
+    BookingsModule,
   ],
 })
 export class AppModule {}
