@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Card, CardContent } from "../components/ui/card";
-import { NairSign, Bed, Calendar } from "lucide-react";
+import { DollarSign, Bed, Calendar } from "lucide-react";
 import {
   LineChart,
   Line,
