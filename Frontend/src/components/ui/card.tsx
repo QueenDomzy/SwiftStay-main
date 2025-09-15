@@ -1,13 +1,11 @@
-import { ReactNode, HTMLAttributes } from "react";
-
-interface CardContentProps extends HTMLAttributes<HTMLDivElement> {
+interface CardProps extends HTMLAttributes<HTMLDivElement> {
   children: ReactNode;
 }
 
-export function CardContent({ children, className, ...props }: CardContentProps) {
+export function Card({ children, className, ...props }: CardProps) {
   return (
-    <div className={`p-4 ${className || ""}`} {...props}>
+    <div className={`rounded-lg shadow-md ${className || ""}`} {...props}>
       {children}
     </div>
   );
-                           }
+}
