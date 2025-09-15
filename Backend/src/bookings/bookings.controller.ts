@@ -1,21 +1,24 @@
 // src/bookings/bookings.controller.ts
-import { Controller, Get } from '@nestjs/common';
-import { PrismaService } from '../prisma.service';
+import { Controller, Get, Post, Body, Param } from '@nestjs/common';
+import { BookingsService } from './bookings.service';
+import { Booking } from './booking.entity';
 
-@Controller('api/bookings')
+@Controller('bookings')
 export class BookingsController {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly bookingsService: BookingsService) {}
 
   @Get()
-  async getAll() {
-    try {
-      const bookings = await this.prisma.booking.findMany({
-        include: { user: true, room: true },
-      });
-      return { bookings };
-    } catch (err) {
-      console.error(err);
-      throw new Error('Failed to fetch bookings'); // NestJS will turn this into 500
-    }
+  getAllBookings(): Promise<Booking[]> {
+    return this.bookingsService.findAll();
+  }
+
+  @Get(':id')
+  getBookingById(@Param('id') id: string): Promise<Booking | null> {
+    return this.bookingsService.findOne(id);
+  }
+
+  @Post()
+  createBooking(@Body() newBooking: Partial<Booking>): Promise<Booking> {
+    return this.bookingsService.create(newBooking);
   }
 }
