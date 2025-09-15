@@ -3,24 +3,29 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Booking } from './booking.entity';
+import { Hotel } from '../hotels/hotel.entity';
 
 @Injectable()
 export class BookingsService {
   constructor(
     @InjectRepository(Booking)
-    private bookingsRepo: Repository<Booking>,
+    private readonly bookingsRepo: Repository<Booking>,
+    @InjectRepository(Hotel)
+    private readonly hotelsRepo: Repository<Hotel>,
   ) {}
 
-  findAll(): Promise<Booking[]> {
-    return this.bookingsRepo.find();
+  async findAllByHotel(hotelId: string): Promise<Booking[]> {
+    return this.bookingsRepo.find({
+      where: { hotel: { id: hotelId } },
+      relations: ['hotel'],
+    });
   }
 
-  findOne(id: string): Promise<Booking | null> {
-    return this.bookingsRepo.findOne({ where: { id } });
-  }
+  async createForHotel(hotelId: string, data: Partial<Booking>): Promise<Booking> {
+    const hotel = await this.hotelsRepo.findOne({ where: { id: hotelId } });
+    if (!hotel) throw new Error('Hotel not found');
 
-  create(booking: Partial<Booking>): Promise<Booking> {
-    const newBooking = this.bookingsRepo.create(booking);
-    return this.bookingsRepo.save(newBooking);
+    const booking = this.bookingsRepo.create({ ...data, hotel });
+    return this.bookingsRepo.save(booking);
   }
-    }
+}
