@@ -1,38 +1,37 @@
 // src/bookings/bookings.service.ts
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { Booking } from './booking.entity';
-import { Hotel } from '../hotels/hotel.entity';
+import { PrismaService } from '../prisma/prisma.service';
+import { CreateBookingDto } from './dto/create-booking.dto';
 
 @Injectable()
 export class BookingsService {
-  constructor(
-    @InjectRepository(Booking)
-    private readonly bookingsRepo: Repository<Booking>,
-    @InjectRepository(Hotel)
-    private readonly hotelsRepo: Repository<Hotel>,
-  ) {}
+  constructor(private prisma: PrismaService) {}
 
-  async findByHotelId(hotelId: string): Promise<Booking[]> {
-  return this.bookingRepository.find({
-    where: { hotel: { id: Number(hotelId) } }, // convert string -> number
-    relations: ['hotel'],
-  });
-}
+  async create(dto: CreateBookingDto) {
+    return this.prisma.booking.create({
+      data: {
+        guestName: dto.guestName,
+        checkIn: new Date(dto.checkIn),
+        checkOut: new Date(dto.checkOut),
+        hotel: { connect: { id: dto.hotelId } },
+        room: { connect: { id: dto.roomId } },
+      },
+      include: { hotel: true, room: true },
+    });
+  }
 
-async create(newBooking: Partial<Booking>): Promise<Booking> {
-  const hotel = await this.hotelRepository.findOne({
-    where: { id: Number(newBooking.hotelId) }, // convert string -> number
-  });
+  async findByHotel(hotelId: number) {
+    return this.prisma.booking.findMany({
+      where: { hotelId },
+      include: { room: true, hotel: true },
+    });
+  }
 
-  if (!hotel) throw new Error('Hotel not found');
+  async findAll() {
+    return this.prisma.booking.findMany({ include: { room: true, hotel: true } });
+  }
 
-  const booking = this.bookingRepository.create({
-    ...newBooking,
-    hotel,
-  });
-
-  return this.bookingRepository.save(booking);
-}
-}
+  async findOne(id: number) {
+    return this.prisma.booking.findUnique({ where: { id }, include: { room: true, hotel: true } });
+  }
+              }
