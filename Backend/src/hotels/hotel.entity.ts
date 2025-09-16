@@ -4,17 +4,17 @@ import { Hotel } from '../hotels/hotel.entity';
 @Entity()
 export class Booking {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id!: string;
 
   @Column()
-  guestName: string;
+  guestName!: string;
 
   @Column({ type: 'date' })
-  checkInDate: string;
+  checkInDate!: string;
 
   @Column({ type: 'date' })
-  checkOutDate: string;
+  checkOutDate!: string;
 
-  @ManyToOne(() => Hotel, hotel => hotel.bookings)
-  hotel: Hotel;
-  }
+  @ManyToOne(() => Hotel, (hotel) => hotel.bookings)
+  hotel!: Hotel;
+}
