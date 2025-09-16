@@ -28,3 +28,8 @@ export class ReservationsController {
     return this.reservationsService.getReservationsByUser(parseInt(userId));
   }
                           }
+
+@Get('hotel/:hotelId')
+async getHotelReservations(@Param('hotelId') hotelId: string) {
+  return this.reservationsService.getReservationsByHotel(parseInt(hotelId));
+      }
