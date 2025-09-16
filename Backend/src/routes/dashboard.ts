@@ -1,33 +1,29 @@
 // src/routes/dashboard.ts
-import express, { Request, Response } from "express";
+import { Router } from "express";
 import prisma from "../utils/prismaClient";
 
-// Import only types (for type safety)
-import type { Booking, Payment, Room, Reservation, Transaction, Hotel } from "@prisma/client";
+const router = Router();
 
-const router = express.Router();
-
-// Example: Get dashboard summary
-router.get("/summary", async (req: Request, res: Response) => {
+// Example: Fetch dashboard stats
+router.get("/", async (req, res) => {
   try {
-    const [hotels, bookings, payments, reservations, transactions] = await Promise.all([
-      prisma.hotel.findMany(),
-      prisma.booking.findMany(),
-      prisma.payment.findMany(),
-      prisma.reservation.findMany(),
-      prisma.transaction.findMany(),
-    ]);
+    const hotelsCount = await prisma.hotel.count();
+    const roomsCount = await prisma.room.count();
+    const bookingsCount = await prisma.booking.count();
+    const reservationsCount = await prisma.reservation.count();
+    const paymentsCount = await prisma.payment.count();
+    const transactionsCount = await prisma.transaction.count();
 
     res.json({
-      totalHotels: hotels.length,
-      totalBookings: bookings.length,
-      totalPayments: payments.length,
-      totalReservations: reservations.length,
-      totalTransactions: transactions.length,
-      latestBookings: bookings.slice(-5),
+      hotels: hotelsCount,
+      rooms: roomsCount,
+      bookings: bookingsCount,
+      reservations: reservationsCount,
+      payments: paymentsCount,
+      transactions: transactionsCount,
     });
   } catch (error) {
-    console.error("Error fetching dashboard data:", error);
+    console.error("Dashboard error:", error);
     res.status(500).json({ error: "Failed to fetch dashboard data" });
   }
 });
