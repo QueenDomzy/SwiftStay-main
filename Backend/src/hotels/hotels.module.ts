@@ -1,10 +1,12 @@
 // src/hotels/hotels.module.ts
 import { Module } from '@nestjs/common';
-import { HotelsController } from './hotels.controller';
-import { HotelsService } from './hotels.service';
+import { HotelService } from './hotel.service';
+import { HotelController } from './hotel.controller';
+import { PrismaService } from '../prisma/prisma.service';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
 @Module({
-  controllers: [HotelsController],
-  providers: [HotelsService],
+  controllers: [HotelController],
+  providers: [HotelService, PrismaService, JwtAuthGuard],
 })
-export class HotelsModule {}
+export class HotelModule {}
