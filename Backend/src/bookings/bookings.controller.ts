@@ -9,7 +9,7 @@ export class BookingsController {
 
   @Get(':hotelId')
   async findByHotel(@Param('hotelId') hotelId: string) {
-    return this.bookingsService.findByHotelId(Number(hotelId));
+    return this.bookingsService.findByHotel(Number(hotelId));
   }
 
   @Post()
