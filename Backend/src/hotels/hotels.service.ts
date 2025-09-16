@@ -25,3 +25,11 @@ export class HotelsService {
     return this.prisma.hotel.findMany({ where: { status: 'pending' } });
   }
     }
+
+  async updateAvailability(hotelId: number, roomType: string, available: boolean) {
+    // For MVP, you can just flag hotel/room as available/unavailable
+    return this.prisma.hotel.update({
+      where: { id: hotelId },
+      data: { [`${roomType}Available`]: available }, // example: SingleAvailable, DoubleAvailable
+    });
+                    }
