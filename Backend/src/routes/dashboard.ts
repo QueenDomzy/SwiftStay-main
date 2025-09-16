@@ -1,63 +1,34 @@
-import { Router } from "express";
-import prisma from "../lib/prisma";
+// src/routes/dashboard.ts
+import express, { Request, Response } from "express";
+import prisma from "../utils/prismaClient";
 
-const router = Router();
+// Import only types (for type safety)
+import type { Booking, Payment, Room, Reservation, Transaction, Hotel } from "@prisma/client";
 
-// Use Prisma’s generated types instead of custom duplicates
-import type { Payment, Booking } from "@prisma/client";
+const router = express.Router();
 
-// Total active rooms
-router.get("/active-rooms", async (req, res) => {
+// Example: Get dashboard summary
+router.get("/summary", async (req: Request, res: Response) => {
   try {
-    const activeRooms = await prisma.room.count({
-      where: { available: true },
+    const [hotels, bookings, payments, reservations, transactions] = await Promise.all([
+      prisma.hotel.findMany(),
+      prisma.booking.findMany(),
+      prisma.payment.findMany(),
+      prisma.reservation.findMany(),
+      prisma.transaction.findMany(),
+    ]);
+
+    res.json({
+      totalHotels: hotels.length,
+      totalBookings: bookings.length,
+      totalPayments: payments.length,
+      totalReservations: reservations.length,
+      totalTransactions: transactions.length,
+      latestBookings: bookings.slice(-5),
     });
-    res.json({ activeRooms });
-  } catch (err) {
-    res
-      .status(500)
-      .json({ error: "Failed to get active rooms", details: err });
-  }
-});
-
-// Total revenue
-router.get("/revenue", async (req, res) => {
-  try {
-    const payments: Payment[] = await prisma.payment.findMany();
-    const totalRevenue = payments.reduce(
-      (sum: number, t: Payment) => sum + t.amount,
-      0
-    );
-    res.json({ totalRevenue });
-  } catch (err) {
-    res.status(500).json({ error: "Failed to get revenue", details: err });
-  }
-});
-
-// Booking trends for past 7 days
-router.get("/booking-trends", async (req, res) => {
-  try {
-    const bookings: Booking[] = await prisma.booking.findMany();
-
-    // Generate past 7 days
-    const past7Days: Date[] = Array.from({ length: 7 }, (_, i: number) => {
-      const d = new Date();
-      d.setDate(d.getDate() - i);
-      return d;
-    });
-
-    const bookingTrendData = past7Days.map((d: Date) => ({
-      date: d.toLocaleDateString("en-US", { month: "short", day: "numeric" }),
-      bookings: bookings.filter(
-        (b: Booking) => b.createdAt.toDateString() === d.toDateString()
-      ).length,
-    }));
-
-    res.json({ bookingTrendData });
-  } catch (err) {
-    res
-      .status(500)
-      .json({ error: "Failed to get booking trends", details: err });
+  } catch (error) {
+    console.error("Error fetching dashboard data:", error);
+    res.status(500).json({ error: "Failed to fetch dashboard data" });
   }
 });
 
