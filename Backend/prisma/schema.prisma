@@ -62,6 +62,7 @@ model Reservation {
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt  // Relation to Booking
   booking    Booking?    @relation(fields: [bookingId], references: [id])
+  bookingId  Int?
 }
 
 
