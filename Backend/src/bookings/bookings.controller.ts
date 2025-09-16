@@ -1,22 +1,21 @@
 // src/bookings/bookings.controller.ts
-import { Controller, Get, Post, Body, Param } from '@nestjs/common';
+import { Controller, Get, Post, Param, Body } from '@nestjs/common';
 import { BookingsService } from './bookings.service';
-import { Booking } from './booking.entity';
+import { CreateBookingDto } from './dto/create-booking.dto';
 
 @Controller('hotels/:hotelId/bookings')
 export class BookingsController {
   constructor(private readonly bookingsService: BookingsService) {}
 
-  @Get()
-  getAll(@Param('hotelId') hotelId: string): Promise<Booking[]> {
-    return this.bookingsService.findAllByHotel(hotelId);
+  @Post()
+  create(@Param('hotelId') hotelId: string, @Body() dto: CreateBookingDto) {
+    // enforce hotelId from route
+    dto.hotelId = Number(hotelId);
+    return this.bookingsService.create(dto);
   }
 
-  @Post()
-  create(
-    @Param('hotelId') hotelId: string,
-    @Body() bookingData: Partial<Booking>,
-  ): Promise<Booking> {
-    return this.bookingsService.createForHotel(hotelId, bookingData);
+  @Get()
+  findByHotel(@Param('hotelId') hotelId: string) {
+    return this.bookingsService.findByHotel(Number(hotelId));
   }
-}
+         }
