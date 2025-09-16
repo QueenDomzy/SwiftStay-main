@@ -51,7 +51,7 @@ model Payment {
 
 
 model Reservation {
-  id         Int      @id @default(uuid())
+  id         Int      @id @default(autoincrement())  // must be autoincrement
   guestName  String
   checkIn    DateTime
   checkOut   DateTime
@@ -60,7 +60,8 @@ model Reservation {
   hotel      Hotel    @relation(fields: [hotelId], references: [id])
   hotelId    Int
   createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  updatedAt  DateTime @updatedAt  // Relation to Booking
+  booking    Booking?    @relation(fields: [bookingId], refernces: [id])
 }
 
 
@@ -79,15 +80,15 @@ model Transaction {
 
 
 model Booking {
-  id         Int      @id @default(uuid())
+  id         Int      @id @default(autoincrement())
   guestName  String
   checkIn    DateTime
   checkOut   DateTime
   room       Room     @relation(fields: [roomId], references: [id])
   roomId     Int
   hotel      Hotel    @relation(fields: [hotelId], references: [id])
-  hotelId    String
-  userId     String
+  hotelId    Int
+  userId     Int
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 
