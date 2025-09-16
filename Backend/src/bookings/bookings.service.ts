@@ -14,18 +14,25 @@ export class BookingsService {
     private readonly hotelsRepo: Repository<Hotel>,
   ) {}
 
-  async findAllByHotel(hotelId: string): Promise<Booking[]> {
-    return this.bookingsRepo.find({
-      where: { hotel: { id: hotelId } },
-      relations: ['hotel'],
-    });
-  }
+  async findByHotelId(hotelId: string): Promise<Booking[]> {
+  return this.bookingRepository.find({
+    where: { hotel: { id: Number(hotelId) } }, // convert string -> number
+    relations: ['hotel'],
+  });
+}
 
-  async createForHotel(hotelId: string, data: Partial<Booking>): Promise<Booking> {
-    const hotel = await this.hotelsRepo.findOne({ where: { id: hotelId } });
-    if (!hotel) throw new Error('Hotel not found');
+async create(newBooking: Partial<Booking>): Promise<Booking> {
+  const hotel = await this.hotelRepository.findOne({
+    where: { id: Number(newBooking.hotelId) }, // convert string -> number
+  });
 
-    const booking = this.bookingsRepo.create({ ...data, hotel });
-    return this.bookingsRepo.save(booking);
-  }
+  if (!hotel) throw new Error('Hotel not found');
+
+  const booking = this.bookingRepository.create({
+    ...newBooking,
+    hotel,
+  });
+
+  return this.bookingRepository.save(booking);
+}
 }
