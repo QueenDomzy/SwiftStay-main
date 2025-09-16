@@ -9,47 +9,36 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// ======================= MODELS =======================
+
 model Hotel {
-  id            String         @id @default(uuid())
-  name          String
-  location      String?
-  description   String?
-  rooms         Room[]
-  bookings      Booking[]
-  reservations  Reservation[]
-  transactions  Transaction[]
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @updatedAt
+  id          String      @id @default(uuid())
+  name        String
+  location    String?
+  description String?
+  rooms       Room[]
+  bookings    Booking[]
+  reservations Reservation[]
+  transactions Transaction[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 }
 
 model Room {
-  id            String         @id @default(uuid())
-  number        String
-  type          String?
-  price         Float?
-  hotel         Hotel          @relation(fields: [hotelId], references: [id])
-  hotelId       String
-  bookings      Booking[]
-  reservations  Reservation[]
-  available     Boolean
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @updatedAt
+  id        String     @id @default(uuid())
+  number    String
+  type      String?
+  price     Float?
+  hotel     Hotel      @relation(fields: [hotelId], references: [id])
+  hotelId   String
+  bookings  Booking[]
+  reservations Reservation[]
+  available Boolean    @default(true)
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
 }
 
-model Payment {
-  id          String    @id @default(uuid())
-  amount      Float
-  method      String
-  status      String
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-
-  // relation to Booking
-  booking     Booking   @relation(fields: [bookingId], references: [id])
-  bookingId   String
-}
-
-model Reservation {
+model Booking {
   id         String     @id @default(uuid())
   guestName  String
   checkIn    DateTime
@@ -58,40 +47,49 @@ model Reservation {
   roomId     String
   hotel      Hotel      @relation(fields: [hotelId], references: [id])
   hotelId    String
-  booking    Booking?   @relation(fields: [bookingId], references: [id])
-  bookingId  String?
+  userId     String
+  payments   Payment[]
+  transaction Transaction?
+  reservation Reservation?
   createdAt  DateTime   @default(now())
   updatedAt  DateTime   @updatedAt
+}
+
+model Payment {
+  id          String   @id @default(uuid())
+  amount      Float
+  method      String
+  status      String
+  booking     Booking  @relation(fields: [bookingId], references: [id])
+  bookingId   String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Reservation {
+  id         String    @id @default(uuid())
+  guestName  String
+  checkIn    DateTime
+  checkOut   DateTime
+  room       Room      @relation(fields: [roomId], references: [id])
+  roomId     String
+  hotel      Hotel     @relation(fields: [hotelId], references: [id])
+  hotelId    String
+  booking    Booking?  @relation(fields: [bookingId], references: [id])
+  bookingId  String?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
 }
 
 model Transaction {
-  id         String     @id @default(uuid())
-  amount     Float
-  method     String
-  status     String
-  hotel      Hotel      @relation(fields: [hotelId], references: [id])
-  hotelId    String
-  booking    Booking?   @relation(fields: [bookingId], references: [id])
-  bookingId  String?
-  createdAt  DateTime   @default(now())
-  updatedAt  DateTime   @updatedAt
-}
-
-model Booking {
-  id            String        @id @default(uuid())
-  guestName     String
-  checkIn       DateTime
-  checkOut      DateTime
-  room          Room          @relation(fields: [roomId], references: [id])
-  roomId        String
-  hotel         Hotel         @relation(fields: [hotelId], references: [id])
-  hotelId       String
-  userId        String
-  createdAt     DateTime      @default(now())
-  updatedAt     DateTime      @updatedAt
-
-  // one-to-many relations
-  payments      Payment[]
-  reservations  Reservation[]
-  transactions  Transaction[]
+  id        String     @id @default(uuid())
+  amount    Float
+  method    String
+  status    String
+  hotel     Hotel      @relation(fields: [hotelId], references: [id])
+  hotelId   String
+  booking   Booking?   @relation(fields: [bookingId], references: [id])
+  bookingId String?
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
 }
