@@ -1,26 +1,21 @@
 // src/hotels/hotels.service.ts
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { Hotel } from './hotel.entity';
+import { PrismaService } from '../prisma/prisma.service';
+import { CreateHotelDto } from './dto/create-hotel.dto';
 
 @Injectable()
 export class HotelsService {
-  constructor(
-    @InjectRepository(Hotel)
-    private readonly hotelsRepo: Repository<Hotel>,
-  ) {}
+  constructor(private prisma: PrismaService) {}
 
-  findAll(): Promise<Hotel[]> {
-    return this.hotelsRepo.find({ relations: ['bookings'] });
+  async create(dto: CreateHotelDto) {
+    return this.prisma.hotel.create({ data: dto });
   }
 
-  findOne(id: string): Promise<Hotel | null> {
-    return this.hotelsRepo.findOne({ where: { id }, relations: ['bookings'] });
+  async findAll() {
+    return this.prisma.hotel.findMany({ include: { bookings: true, rooms: true } });
   }
 
-  create(hotel: Partial<Hotel>): Promise<Hotel> {
-    const newHotel = this.hotelsRepo.create(hotel);
-    return this.hotelsRepo.save(newHotel);
+  async findOne(id: number) {
+    return this.prisma.hotel.findUnique({ where: { id }, include: { bookings: true, rooms: true } });
   }
-  }
+                                     }
