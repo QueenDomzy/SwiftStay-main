@@ -1,24 +1,30 @@
-// src/hotels/hotels.controller.ts
-import { Controller, Get, Post, Param, Body } from '@nestjs/common';
+import { Body, Controller, Get, Post } from '@nestjs/common';
 import { HotelsService } from './hotels.service';
-import { CreateHotelDto } from './dto/create-hotel.dto';
 
 @Controller('hotels')
 export class HotelsController {
-  constructor(private readonly hotelsService: HotelsService) {}
+  constructor(private hotelsService: HotelsService) {}
 
   @Post()
-  create(@Body() dto: CreateHotelDto) {
-    return this.hotelsService.create(dto);
+  async createHotel(@Body() body: any) {
+    const { name, location, price, roomType, photos, ownerId } = body;
+
+    if (!name || !location || !price || !roomType) {
+      return { error: 'Missing required fields' };
+    }
+
+    return this.hotelsService.createHotel({
+      name,
+      location,
+      price: parseFloat(price),
+      roomType,
+      photos: photos || [],
+      ownerId: parseInt(ownerId),
+    });
   }
 
-  @Get()
-  findAll() {
-    return this.hotelsService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.hotelsService.findOne(Number(id));
+  @Get('pending')
+  async pendingHotels() {
+    return this.hotelsService.getPendingHotels();
   }
 }
