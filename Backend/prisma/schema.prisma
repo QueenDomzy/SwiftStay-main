@@ -9,6 +9,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+
 model Hotel {
   id          Int       @id @default(autoincrement())
   name        String
@@ -19,6 +20,7 @@ model Hotel {
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 }
+
 
 model Room {
   id        Int     @id @default(autoincrement())
@@ -31,6 +33,35 @@ model Room {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
+
+
+model Reservation {
+  id         Int      @id @default(autoincrement())
+  guestName  String
+  checkIn    DateTime
+  checkOut   DateTime
+  room       Room     @relation(fields: [roomId], references: [id])
+  roomId     Int
+  hotel      Hotel    @relation(fields: [hotelId], references: [id])
+  hotelId    Int
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+
+model Transaction {
+  id        String     @id @default(uuid())
+  amount    Int
+  method    String
+  status    String
+  hotel     Hotel   @relation(fields: [hotelId], references: [id])
+  hotelId   Int
+  booking   Booking?  @relation(fields: [bookingId], references: [id])
+  BookingId Strings?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
 
 model Booking {
   id         Int      @id @default(autoincrement())
