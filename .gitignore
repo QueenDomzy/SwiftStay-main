@@ -1,0 +1,16 @@
+# Node
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Env
+.env
+
+# Next.js
+.next/
+out/
+
+# Build
+dist/
+build/
+coverage/
