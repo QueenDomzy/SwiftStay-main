@@ -1,5 +1,7 @@
+// prisma/schema.prisma
 generator client {
   provider = "prisma-client-js"
+  output   = "./node_modules/@prisma/client"
 }
 
 datasource db {
@@ -7,108 +9,38 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// ======================
-// User Model
-// ======================
-model User {
-  id           String        @id @default(uuid())
-  name         String
-  email        String        @unique
-  password     String
-  isOwner      Boolean       @default(false)
-  hotels       Hotel[]
-  bookings     Booking[]
-  reservations Reservation[]
-  createdAt    DateTime      @default(now())
-  updatedAt    DateTime      @updatedAt
-}
-
-// ======================
-// Hotel Model
-// ======================
 model Hotel {
-  id          String        @id @default(uuid())
+  id          Int       @id @default(autoincrement())
   name        String
-  location    String
+  location    String?
   description String?
-  rating      Float?        @default(0.0)
-  ownerId     String?
-  owner       User?         @relation(fields: [ownerId], references: [id])
   rooms       Room[]
-  reservations Reservation[]
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
+  bookings    Booking[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 }
 
-// ======================
-// Room Model
-// ======================
 model Room {
-  id        String    @id @default(uuid())
-  hotelId   String
-  hotel     Hotel     @relation(fields: [hotelId], references: [id])
-  name      String
-  type      String
-  price     Float
-  capacity  Int
-  available Boolean   @default(true)
+  id        Int     @id @default(autoincrement())
+  number    String
+  type      String?
+  price     Float?
+  hotel     Hotel   @relation(fields: [hotelId], references: [id])
+  hotelId   Int
   bookings  Booking[]
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
-// ======================
-// Booking Model
-// ======================
 model Booking {
-  id         String    @id @default(uuid())
-  userId     String
-  user       User      @relation(fields: [userId], references: [id])
-  roomId     String
-  room       Room      @relation(fields: [roomId], references: [id])
-  startDate  DateTime
-  endDate    DateTime
-  status     String    @default("pending")
-  payment    Payment?
-  createdAt  DateTime  @default(now())
-  updatedAt  DateTime  @updatedAt
-}
-
-// ======================
-// Reservation Model
-// ======================
-model Reservation {
-  id        String   @id @default(uuid())
-  userId    String
-  user      User     @relation(fields: [userId], references: [id])
-  hotelId   String
-  hotel     Hotel    @relation(fields: [hotelId], references: [id])
-  date      DateTime
-  status    String   @default("pending")
-  createdAt DateTime @default(now())
-}
-
-// ======================
-// Payment Model
-// ======================
-model Payment {
-  id          String   @id @default(uuid())
-  bookingId   String   @unique
-  booking     Booking  @relation(fields: [bookingId], references: [id])
-  amount      Float
-  method      String
-  status      String   @default("pending")
-  transaction String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-}
-
-// ======================
-// Transaction Model
-// ======================
-model Transaction {
-  id        String   @id @default(uuid())
-  method    String
-  amount    Float
-  createdAt DateTime @default(now())
+  id         Int      @id @default(autoincrement())
+  guestName  String
+  checkIn    DateTime
+  checkOut   DateTime
+  room       Room     @relation(fields: [roomId], references: [id])
+  roomId     Int
+  hotel      Hotel    @relation(fields: [hotelId], references: [id])
+  hotelId    Int
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 }
