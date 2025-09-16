@@ -1,18 +1,22 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Controller, Get, Post, Patch, Param, Body, UseGuards } from '@nestjs/common';
 import { HotelsService } from './hotels.service';
-import { Patch, Param, Body } from '@nestjs/common';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
-@Patch(':id/availability')
-async updateAvailability(
-  @Param('id') hotelId: string,
-  @Body() body: { roomType: string; available: boolean }
-) {
-  // Optional: store availability per room type
-  return this.hotelsService.updateAvailability(parseInt(hotelId), body.roomType, body.available);
+// Admin routes
+@Controller('admin')
+@UseGuards(JwtAuthGuard)
+export class AdminController {
+  @Get('dashboard')
+  getDashboard() {
+    return { message: 'Protected: Admin dashboard' };
+  }
 }
+
+// Hotel routes (protected)
 @Controller('hotels')
+@UseGuards(JwtAuthGuard)
 export class HotelsController {
-  constructor(private hotelsService: HotelsService) {}
+  constructor(private readonly hotelsService: HotelsService) {}
 
   @Post()
   async createHotel(@Body() body: any) {
@@ -32,8 +36,25 @@ export class HotelsController {
     });
   }
 
+  @Get()
+  async getAllHotels() {
+    return this.hotelsService.getAllHotels();
+  }
+
   @Get('pending')
   async pendingHotels() {
     return this.hotelsService.getPendingHotels();
+  }
+
+  @Patch(':id/availability')
+  async updateAvailability(
+    @Param('id') hotelId: string,
+    @Body() body: { roomType: string; available: boolean }
+  ) {
+    return this.hotelsService.updateAvailability(
+      parseInt(hotelId),
+      body.roomType,
+      body.available
+    );
   }
 }
