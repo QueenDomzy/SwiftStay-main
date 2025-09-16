@@ -1,20 +1,19 @@
 // prisma/schema.prisma
-generator client {
-  provider = "prisma-client-js"
-  output   = "./node_modules/@prisma/client"
+datasource db {
+  provider = "postgresql" // or mysql/sqlite depending on Render setup
+  url      = env("DATABASE_URL")
 }
 
-datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+generator client {
+  provider = "prisma-client-js"
 }
 
 model Hotel {
   id          Int          @id @default(autoincrement())
   name        String
   location    String
+  description String?
   rooms       Room[]
-  reservations Reservation[]
   bookings    Booking[]
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
@@ -34,9 +33,12 @@ model Room {
 model Booking {
   id            Int           @id @default(autoincrement())
   userId        Int
+  hotelId       Int
   roomId        Int
+  hotel         Hotel         @relation(fields: [hotelId], references: [id])
+  room          Room          @relation(fields: [roomId], references: [id])
+  reservation   Reservation?
   reservationId Int?
-  reservation   Reservation?  @relation(fields: [reservationId], references: [id])
   payments      Payment[]
   createdAt     DateTime      @default(now())
 }
@@ -55,13 +57,14 @@ model Payment {
   status    String   // e.g. "pending", "paid"
   bookingId Int
   booking   Booking  @relation(fields: [bookingId], references: [id])
+  createdAt DateTime @default(now())
 }
 
 model Transaction {
   id            Int      @id @default(autoincrement())
   reference     String   @unique
   amount        Float
-  status        String   // e.g. "pending", "success", "failed"
+  status        String   // "pending", "success", "failed"
   reservationId Int?
   reservation   Reservation? @relation(fields: [reservationId], references: [id])
   createdAt     DateTime @default(now())
