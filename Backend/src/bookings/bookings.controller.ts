@@ -1,9 +1,19 @@
-// src/bookings/bookings.module.ts
-import { Module } from '@nestjs/common';
+// src/bookings/bookings.controller.ts
+import { Controller, Get, Post, Param, Body } from '@nestjs/common';
 import { BookingsService } from './bookings.service';
+import { CreateBookingDto } from './dto/create-booking.dto';
 
-@Module({
-  controllers: [BookingsController],
-  providers: [BookingsService],
-})
-export class BookingsModule {}
+@Controller('bookings')
+export class BookingsController {
+  constructor(private readonly bookingsService: BookingsService) {}
+
+  @Get(':hotelId')
+  async findByHotel(@Param('hotelId') hotelId: string) {
+    return this.bookingsService.findByHotelId(Number(hotelId));
+  }
+
+  @Post()
+  async create(@Body() createBookingDto: CreateBookingDto) {
+    return this.bookingsService.createBooking(createBookingDto);
+  }
+  }
