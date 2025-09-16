@@ -1,23 +1,24 @@
-import { Controller, Get, Post, Body, Param } from '@nestjs/common';
+// src/hotels/hotels.controller.ts
+import { Controller, Get, Post, Param, Body } from '@nestjs/common';
 import { HotelsService } from './hotels.service';
-import { Hotel } from './hotel.entity';
+import { CreateHotelDto } from './dto/create-hotel.dto';
 
 @Controller('hotels')
 export class HotelsController {
   constructor(private readonly hotelsService: HotelsService) {}
 
+  @Post()
+  create(@Body() dto: CreateHotelDto) {
+    return this.hotelsService.create(dto);
+  }
+
   @Get()
-  getAllHotels(): Promise<Hotel[]> {
+  findAll() {
     return this.hotelsService.findAll();
   }
 
   @Get(':id')
-  getHotelById(@Param('id') id: string): Promise<Hotel | null> {
-    return this.hotelsService.findOne(id);
-  }
-
-  @Post()
-  createHotel(@Body() newHotel: Partial<Hotel>): Promise<Hotel> {
-    return this.hotelsService.create(newHotel);
+  findOne(@Param('id') id: string) {
+    return this.hotelsService.findOne(Number(id));
   }
 }
