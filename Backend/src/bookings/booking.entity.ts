@@ -4,14 +4,14 @@ import { Booking } from '../bookings/booking.entity';
 @Entity()
 export class Hotel {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id!: string; // use ! to satisfy strict TS checks
 
   @Column()
-  name: string;
+  name!: string;
 
   @Column()
-  location: string;
+  location!: string;
 
-  @OneToMany(() => Booking, booking => booking.hotel)
-  bookings: Booking[];
-}
+  @OneToMany(() => Booking, (booking) => booking.hotel)
+  bookings!: Booking[];
+  }
