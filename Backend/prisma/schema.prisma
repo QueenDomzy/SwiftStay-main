@@ -38,13 +38,12 @@ model Reservation {
 }
 
 model Payment {
-  id         String   @id @default(cuid())
-  amount     Float
-  method     String
-  bookingId  String
-  booking    Booking  @relation(fields: [bookingId], references: [id])
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  id           Int      @id @default(autoincrement())
+  reservationId Int
+  amount       Float
+  status       String   @default("pending") // pending, success, failed
+  reference    String   @unique
+  createdAt    DateTime @default(now())
 }
 
 model User {
