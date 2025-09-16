@@ -1,4 +1,23 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+import { Booking } from '../bookings/booking.entity';
+
+@Entity()
+export class Hotel {
+  @PrimaryGeneratedColumn('uuid')
+  id!: string;
+  
+  @Column()
+  name!: string;
+
+  @Column()
+  location!: string;
+
+  @OneToMany(() => Booking, (booking) => booking.hotel)
+  bookings!: Booking[];
+}
+
+// Export explicitly
+export type { Hotel };import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
 import { Hotel } from '../hotels/hotel.entity';
 
 @Entity()
