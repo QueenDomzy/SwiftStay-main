@@ -10,93 +10,59 @@ datasource db {
 }
 
 model Hotel {
-  id          String        @id @default(uuid())
+  id          Int          @id @default(autoincrement())
   name        String
-  location    String?
-  description String?
+  location    String
   rooms       Room[]
-  bookings    Booking[]
-  transactions Transaction[]
   reservations Reservation[]
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
+  bookings    Booking[]
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
 }
 
 model Room {
-  id        String    @id @default(uuid())
-  number    String
-  type      String?
-  price     Float?
-  available Boolean   @default(true)
-  hotelId   String
-  hotel     Hotel     @relation(fields: [hotelId], references: [id])
-  bookings  Booking[]
-  reservations Reservation[]
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  id          Int          @id @default(autoincrement())
+  number      String
+  type        String
+  price       Float
+  available   Boolean      @default(true)
+  hotelId     Int
+  hotel       Hotel        @relation(fields: [hotelId], references: [id])
+  bookings    Booking[]
 }
 
 model Booking {
-  id          String        @id @default(uuid())
-  guestName   String
-  checkIn     DateTime
-  checkOut    DateTime
-  roomId      String
-  room        Room          @relation(fields: [roomId], references: [id])
-  hotelId     String
-  hotel       Hotel         @relation(fields: [hotelId], references: [id])
-  userId      String
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
-
-  // Relations
-  payments     Payment[]
-  reservations Reservation[]
-  transactions Transaction[]
-}
-
-model Payment {
-  id        String   @id @default(uuid())
-  amount    Float
-  method    String
-  status    String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  bookingId String
-  booking   Booking  @relation(fields: [bookingId], references: [id])
+  id            Int           @id @default(autoincrement())
+  userId        Int
+  roomId        Int
+  reservationId Int?
+  reservation   Reservation?  @relation(fields: [reservationId], references: [id])
+  payments      Payment[]
+  createdAt     DateTime      @default(now())
 }
 
 model Reservation {
-  id        String   @id @default(uuid())
-  guestName String
-  checkIn   DateTime
-  checkOut  DateTime
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id          Int          @id @default(autoincrement())
+  booking     Booking[]
+  checkIn     DateTime
+  checkOut    DateTime
+  transaction Transaction?
+}
 
-  // Relations
-  roomId    String
-  room      Room     @relation(fields: [roomId], references: [id])
-
-  hotelId   String
-  hotel     Hotel    @relation(fields: [hotelId], references: [id])
-
-  bookingId String?
-  booking   Booking? @relation(fields: [bookingId], references: [id])
+model Payment {
+  id        Int      @id @default(autoincrement())
+  amount    Float
+  status    String   // e.g. "pending", "paid"
+  bookingId Int
+  booking   Booking  @relation(fields: [bookingId], references: [id])
 }
 
 model Transaction {
-  id        String   @id @default(uuid())
-  amount    Float
-  method    String
-  status    String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  hotelId   String
-  hotel     Hotel    @relation(fields: [hotelId], references: [id])
-
-  bookingId String?
-  booking   Booking? @relation(fields: [bookingId], references: [id])
+  id            Int      @id @default(autoincrement())
+  reference     String   @unique
+  amount        Float
+  status        String   // e.g. "pending", "success", "failed"
+  reservationId Int?
+  reservation   Reservation? @relation(fields: [reservationId], references: [id])
+  createdAt     DateTime @default(now())
 }
