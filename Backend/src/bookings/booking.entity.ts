@@ -19,5 +19,4 @@ export class Booking {
   hotel!: Hotel;
 }
 
-// Export explicitly
-export type { Booking };
+export { Booking };
