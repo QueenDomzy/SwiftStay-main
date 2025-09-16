@@ -25,6 +25,18 @@ model Hotel {
   createdAt  DateTime @default(now())
 }
 
+model Reservation {
+  id         Int      @id @default(autoincrement())
+  userId     Int
+  hotelId    Int
+  roomType   String
+  checkIn    DateTime
+  checkOut   DateTime
+  totalPrice Float
+  status     String   @default("pending") // pending, confirmed, cancelled
+  createdAt  DateTime @default(now())
+}
+
 model Payment {
   id         String   @id @default(cuid())
   amount     Float
