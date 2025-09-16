@@ -7,8 +7,8 @@ import { HotelsController } from './hotels.controller';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Hotel])],
-  providers: [HotelsService],
   controllers: [HotelsController],
-  exports: [HotelsService],
+  providers: [HotelsService],
+  exports: [TypeOrmModule], // Export repository to other modules
 })
 export class HotelsModule {}
