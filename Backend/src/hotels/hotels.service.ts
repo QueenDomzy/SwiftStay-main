@@ -1,35 +1,54 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, ForbiddenException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
-export class HotelsService {
+export class HotelService {
   constructor(private prisma: PrismaService) {}
 
-  async createHotel(data: {
+  // Admin-only hotel creation
+  async createHotelAdmin(data: {
     name: string;
     location: string;
     price: number;
     roomType: string;
     photos: string[];
     ownerId: number;
-  }) {
+  }, userRole: string) {
+    if (userRole !== 'ADMIN') throw new ForbiddenException('Access denied');
     return this.prisma.hotel.create({
       data: {
         ...data,
-        status: 'pending', // default
+        status: 'pending',
       },
     });
+  }
+
+  async getAllHotels() {
+    return this.prisma.hotel.findMany();
+  }
+
+  async getHotelById(id: number) {
+    return this.prisma.hotel.findUnique({ where: { id } });
+  }
+
+  async updateHotel(id: number, data: any, userRole: string) {
+    if (userRole !== 'ADMIN') throw new ForbiddenException('Access denied');
+    return this.prisma.hotel.update({ where: { id }, data });
+  }
+
+  async deleteHotel(id: number, userRole: string) {
+    if (userRole !== 'ADMIN') throw new ForbiddenException('Access denied');
+    return this.prisma.hotel.delete({ where: { id } });
   }
 
   async getPendingHotels() {
     return this.prisma.hotel.findMany({ where: { status: 'pending' } });
   }
-    }
 
   async updateAvailability(hotelId: number, roomType: string, available: boolean) {
-    // For MVP, you can just flag hotel/room as available/unavailable
     return this.prisma.hotel.update({
       where: { id: hotelId },
-      data: { [`${roomType}Available`]: available }, // example: SingleAvailable, DoubleAvailable
+      data: { [`${roomType}Available`]: available },
     });
-                    }
+  }
+}
