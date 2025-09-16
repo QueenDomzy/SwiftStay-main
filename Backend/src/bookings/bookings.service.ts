@@ -1,17 +1,16 @@
-// src/bookings/bookings.service.ts
 import { Injectable } from '@nestjs/common';
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from '../prisma/prisma.service';
 import { CreateBookingDto } from './dto/create-booking.dto';
-
-const prisma = new PrismaClient();
 
 @Injectable()
 export class BookingsService {
+  constructor(private prisma: PrismaService) {}
+
   /**
    * Find bookings for a given hotel
    */
   async findByHotel(hotelId: number) {
-    return prisma.booking.findMany({
+    return this.prisma.booking.findMany({
       where: { hotelId },
       include: { hotel: true },
     });
@@ -21,7 +20,7 @@ export class BookingsService {
    * Create a booking for a hotel
    */
   async createBooking(dto: CreateBookingDto) {
-    return prisma.booking.create({
+    return this.prisma.booking.create({
       data: {
         guestName: dto.guestName,
         checkIn: new Date(dto.checkIn),
@@ -31,4 +30,4 @@ export class BookingsService {
       },
     });
   }
-                    }
+        }
