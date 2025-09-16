@@ -1,20 +1,17 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
-import { Hotel } from '../hotels/hotel.entity';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+import { Booking } from '../bookings/booking.entity';
 
 @Entity()
-export class Booking {
+export class Hotel {
   @PrimaryGeneratedColumn('uuid')
-  id!: string;
+  id: string;
 
   @Column()
-  guestName!: string;
+  name: string;
 
   @Column()
-  checkInDate!: Date;
+  location: string;
 
-  @Column()
-  checkOutDate!: Date;
-
-  @ManyToOne(() => Hotel, hotel => hotel.bookings, { onDelete: 'CASCADE' })
-  hotel!: Hotel;
+  @OneToMany(() => Booking, booking => booking.hotel)
+  bookings: Booking[];
 }
