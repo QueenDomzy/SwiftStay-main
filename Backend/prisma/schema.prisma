@@ -50,12 +50,13 @@ model Reservation {
 }
 
 model Booking {
-  id         String     @id @default(cuid())
-  userId     String
-  user       User       @relation(fields: [userId], references: [id])
-  payments   Payment[]  // 🔥 One booking → many payments
-  createdAt  DateTime   @default(now())
-  updatedAt  DateTime   @updatedAt
+  id           String         @id @default(cuid())
+  userId       String
+  user         User           @relation(fields: [userId], references: [id])
+  reservations Reservation[]  // 🔥 Add this line (Booking → Reservation)
+  payments     Payment[]      // one booking → many payments
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
 }
 
 model Payment {
