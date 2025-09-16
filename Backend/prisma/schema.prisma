@@ -61,7 +61,7 @@ model Reservation {
   hotelId    Int
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt  // Relation to Booking
-  booking    Booking?    @relation(fields: [bookingId], refernces: [id])
+  booking    Booking?    @relation(fields: [bookingId], references: [id])
 }
 
 
@@ -73,7 +73,7 @@ model Transaction {
   hotel     Hotel   @relation(fields: [hotelId], references: [id])
   hotelId   Int
   booking   Booking?  @relation(fields: [bookingId], references: [id])
-  BookingId Strings?
+  bookingId Int?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
