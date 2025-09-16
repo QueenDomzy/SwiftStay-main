@@ -14,49 +14,15 @@ datasource db {
 // =============================
 
 model Hotel {
-  id            String         @id @default(cuid())
-  name          String
-  location      String
-  rooms         Room[]
-  reservations  Reservation[]  // 🔥 Fix for Reservation → Hotel
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @updatedAt
-}
-
-model Room {
-  id            String         @id @default(cuid())
-  number        String
-  type          String
-  price         Float
-  hotelId       String
-  hotel         Hotel          @relation(fields: [hotelId], references: [id])
-  reservations  Reservation[]  // 🔥 Fix for Reservation → Room
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @updatedAt
-}
-
-model Reservation {
-  id            String   @id @default(cuid())
-  hotelId       String
-  hotel         Hotel    @relation(fields: [hotelId], references: [id])
-  roomId        String
-  room          Room     @relation(fields: [roomId], references: [id])
-  userId        String
-  user          User     @relation(fields: [userId], references: [id])
-  bookingId     String?
-  booking       Booking? @relation(fields: [bookingId], references: [id])
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-}
-
-model Booking {
-  id           String         @id @default(cuid())
-  userId       String
-  user         User           @relation(fields: [userId], references: [id])
-  reservations Reservation[]  // 🔥 Add this line (Booking → Reservation)
-  payments     Payment[]      // one booking → many payments
-  createdAt    DateTime       @default(now())
-  updatedAt    DateTime       @updatedAt
+  id         Int      @id @default(autoincrement())
+  name       String
+  location   String
+  price      Float
+  roomType   String
+  photos     String[]
+  ownerId    Int
+  status     String   @default("pending")
+  createdAt  DateTime @default(now())
 }
 
 model Payment {
