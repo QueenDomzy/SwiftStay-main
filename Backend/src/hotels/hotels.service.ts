@@ -1,9 +1,9 @@
 import { Injectable, ForbiddenException } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
+import { PrismaClient } from '../prisma/prisma.service';
 
 @Injectable()
 export class HotelService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaClient) {}
 
   // Admin-only hotel creation
   async createHotelAdmin(data: {
