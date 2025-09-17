@@ -33,8 +33,7 @@ export class ReservationsService {
   }
 
   async getReservationsByUser(userId: number) {
-    return this.prisma.reservation.findMany({
-      where: { userId },
+    return this.prisma.reservation.findMany({ where: { userId },
     });
   }
 
