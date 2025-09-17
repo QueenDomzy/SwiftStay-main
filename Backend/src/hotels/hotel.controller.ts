@@ -1,5 +1,5 @@
 import { Controller, Get, Post, Patch, Param, Body, UseGuards } from '@nestjs/common';
-import { HotelsService } from './hotels.service';
+import { HotelService } from './hotel.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
 // Admin routes
@@ -15,8 +15,8 @@ export class AdminController {
 // Hotel routes (protected)
 @Controller('hotels')
 @UseGuards(JwtAuthGuard)
-export class HotelsController {
-  constructor(private readonly hotelsService: HotelsService) {}
+export class HotelController {
+  constructor(private readonly hotelService: HotelService) {}
 
   @Post()
   async createHotel(@Body() body: any) {
@@ -26,7 +26,7 @@ export class HotelsController {
       return { error: 'Missing required fields' };
     }
 
-    return this.hotelsService.createHotel({
+    return this.hotelService.createHotel({
       name,
       location,
       price: parseFloat(price),
@@ -38,12 +38,12 @@ export class HotelsController {
 
   @Get()
   async getAllHotels() {
-    return this.hotelsService.getAllHotels();
+    return this.hotelService.getAllHotels();
   }
 
   @Get('pending')
   async pendingHotels() {
-    return this.hotelsService.getPendingHotels();
+    return this.hotelService.getPendingHotels();
   }
 
   @Patch(':id/availability')
@@ -51,7 +51,7 @@ export class HotelsController {
     @Param('id') hotelId: string,
     @Body() body: { roomType: string; available: boolean }
   ) {
-    return this.hotelsService.updateAvailability(
+    return this.hotelService.updateAvailability(
       parseInt(hotelId),
       body.roomType,
       body.available
