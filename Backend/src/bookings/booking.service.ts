@@ -1,33 +1,40 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaClient } from '../prisma/prisma.service';
-import { CreateBookingDto } from './dto/create-booking.dto';
+import { PrismaService } from '../prisma/prisma.service';
+import { AiService } from '../ai/ai.service';
+import { CreateReservationDto } from './dto/reservation.dto';
 
 @Injectable()
 export class BookingService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private aiService: AiService
+  ) {}
 
-  /**
-   * Find bookings for a given hotel
-   */
-  async findByHotel(hotelId: number) {
-    return this.prisma.booking.findMany({
-      where: { hotelId },
-      include: { hotel: true },
-    });
-  }
-
-  /**
-   * Create a booking for a hotel
-   */
-  async createBooking(dto: CreateBookingDto) {
-    return this.prisma.booking.create({
-      data: {
-        guestName: dto.guestName,
-        checkIn: new Date(dto.checkIn),
-        checkOut: new Date(dto.checkOut),
-        hotelId: dto.hotelId,
-        roomId: dto.roomId,
+  async createReservation(data: CreateReservationDto) {
+    const overlapping = await this.prisma.reservation.findFirst({
+      where: {
+        hotelId: data.hotelId,
+        roomType: data.roomType,
+        status: 'confirmed',
+        OR: [
+          {
+            checkIn: { lte: data.checkOut },
+            checkOut: { gte: data.checkIn },
+          },
+        ],
       },
     });
+
+    if (overlapping) {
+      // Use AI service to recommend alternatives
+      const recommendations = await this.aiService.getHotelRecommendations(
+        `Looking for hotels similar to hotelId ${data.hotelId}`
+      );
+      throw new Error(
+        `Selected room is not available. Recommended alternatives: ${recommendations}`
+      );
+    }
+
+    return this.prisma.reservation.create({ data });
   }
-        }
+  }
