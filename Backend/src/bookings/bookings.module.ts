@@ -1,12 +1,11 @@
-// src/bookings/bookings.module.ts
 import { Module } from '@nestjs/common';
-import { BookingController } from './bookings.controller';
-import { BookingService } from './bookings.service';
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { BookingsService } from './bookings.service';
+import { PrismaService } from '../prisma/prisma.service';
+import { AiModule } from '../ai/ai.module';
 
 @Module({
-  controllers: [BookingController],
-  providers: [BookingService, PrismaService. JwtAuthGuard],
-  imports: [],
+  imports: [AiModule],
+  providers: [BookingsService, PrismaService],
+  exports: [BookingsService],
 })
-export class BookingModule {}
+export class BookingsModule {}
