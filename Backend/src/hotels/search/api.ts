@@ -1,15 +1,11 @@
-import { Request, Response } from 'express';
+import axios from "axios";
 
-export const searchHotels = async (req: Request, res: Response) => {
- try {
-  const response = await axios.get(url);
-  return response.data;
-} 
- catch (error) {
-  if (error instanceof Error) {
-    console.error("Hotel search error:", error.message);
-  } else {
-    console.error("Hotel search error:", error);
+export async function searchHotels(query: string) {
+  try {
+    const response = await axios.get(`https://example.com/api/hotels?q=${query}`);
+    return response.data;
+  } catch (error: any) {
+    console.error("Hotel search error:", error?.message || error);
+    throw new Error("Failed to fetch hotels");
   }
-  throw new Error("Failed to fetch hotels");
- } 
+}
