@@ -26,17 +26,20 @@ model Hotel {
 }
 
 model Reservation {
-  id         Int      @id @default(autoincrement())
-  userId     Int
-  hotelId    Int
-  roomType   String
-  checkIn    DateTime
-  checkOut   DateTime
-  totalPrice Float
-  status     String   @default("pending") // pending, confirmed, cancelled
-  createdAt  DateTime @default(now())
-}
+  id           Int      @id @default(autoincrement())
+  userId       Int
+  hotelId      Int
+  roomType     String
+  status       String   @default("confirmed")
+  checkIn      DateTime
+  checkOut     DateTime
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
+  // relations
+  user  User   @relation(fields: [userId], references: [id])
+  hotel Hotel  @relation(fields: [hotelId], references: [id])
+}
 model Payment {
   id           Int      @id @default(autoincrement())
   reservationId Int
