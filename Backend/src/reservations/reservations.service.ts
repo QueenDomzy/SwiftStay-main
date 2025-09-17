@@ -1,37 +1,44 @@
 // src/reservations/reservations.service.ts
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateReservationDto } from './dto/create-reservation.dto';
-import { UpdateReservationDto } from './dto/update-reservation.dto';
 
 @Injectable()
 export class ReservationsService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private prisma: PrismaService) {}
 
-  async create(createReservationDto: CreateReservationDto) {
-    return this.prisma.reservation.create({
-      data: createReservationDto,
+  async createReservation(data: CreateReservationDto) {
+    // Check for overlapping bookings
+    const overlapping = await this.prisma.reservation.findFirst({
+      where: {
+        hotelId: data.hotelId,
+        roomType: data.roomType,
+        status: 'confirmed',
+        OR: [
+          {
+            checkIn: { lte: data.checkOut },
+            checkOut: { gte: data.checkIn },
+          },
+        ],
+      },
     });
+
+    if (overlapping) {
+      throw new Error('Selected room is not available for these dates');
+    }
+
+    // Create reservation
+    return this.prisma.reservation.create({ data });
   }
 
-  async findAll() {
-    return this.prisma.reservation.findMany();
+  async getReservationsByUser(userId: number) {
+    return this.prisma.reservation.findMany({ where: { userId } });
   }
 
-  async findOne(id: number) {
-    const reservation = await this.prisma.reservation.findUnique({ where: { id } });
-    if (!reservation) throw new NotFoundException(`Reservation with ID ${id} not found`);
-    return reservation;
-  }
-
-  async update(id: number, updateReservationDto: UpdateReservationDto) {
-    return this.prisma.reservation.update({
-      where: { id },
-      data: updateReservationDto,
+  async getReservationsByHotel(hotelId: number) {
+    return this.prisma.reservation.findMany({
+      where: { hotelId },
+      orderBy: { checkIn: 'desc' },
     });
-  }
-
-  async remove(id: number) {
-    return this.prisma.reservation.delete({ where: { id } });
   }
   }
