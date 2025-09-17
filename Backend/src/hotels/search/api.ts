@@ -1,11 +1,17 @@
-import axios from "axios";
+// src/hotels/search/api.ts
+import axios from 'axios';
 
 export async function searchHotels(query: string) {
   try {
-    const response = await axios.get(`https://example.com/api/hotels?q=${query}`);
+    const url = `https://example.com/api/hotels?q=${encodeURIComponent(query)}`;
+    const response = await axios.get(url);
     return response.data;
-  } catch (error: any) {
-    console.error("Hotel search error:", error?.message || error);
-    throw new Error("Failed to fetch hotels");
+  } catch (err: any) { // use `any` or `instanceof Error`
+    if (err instanceof Error) {
+      console.error('Hotel search error:', err.message);
+    } else {
+      console.error('Hotel search non-error:', err);
+    }
+    throw new Error('Failed to fetch hotels');
   }
 }
