@@ -1,25 +1,25 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import { CreateReservationDto } from './dto/create-reservation.dto';
 
 @Injectable()
-export class ReservationsService {
+export class ReservationService {
   constructor(private prisma: PrismaService) {}
 
-  async createReservation(data: {
-    userId: number;
-    hotelId: number;
-    roomType: string;
-    checkIn: Date;
-    checkOut: Date;
-    totalPrice: number;
-  }) {
-    // Optional: check for double-booking
+  // Create a new reservation
+  async createReservation(data: CreateReservationDto) {
+    // Optional: check for overlapping bookings
     const overlapping = await this.prisma.reservation.findFirst({
       where: {
         hotelId: data.hotelId,
         roomType: data.roomType,
-        checkIn: { lte: data.checkOut },
-        checkOut: { gte: data.checkIn },
+        status: 'confirmed', // Only consider confirmed bookings
+        OR: [
+          {
+            checkIn: { lte: data.checkOut },
+            checkOut: { gte: data.checkIn },
+          },
+        ],
       },
     });
 
@@ -27,50 +27,20 @@ export class ReservationsService {
       throw new Error('Selected room is not available for these dates');
     }
 
+    // Create reservation
     return this.prisma.reservation.create({ data });
   }
 
+  // Get all reservations for a specific user
   async getReservationsByUser(userId: number) {
     return this.prisma.reservation.findMany({ where: { userId } });
   }
-}
 
-async createReservation(data: {
-  userId: number;
-  hotelId: number;
-  roomType: string;
-  checkIn: Date;
-  checkOut: Date;
-  totalPrice: number;
-}) {
-  // Check for overlapping bookings
-  const overlapping = await this.prisma.reservation.findFirst({
-    where: {
-      hotelId: data.hotelId,
-      roomType: data.roomType,
-      status: 'confirmed',
-      OR: [
-        {
-          checkIn: { lte: data.checkOut },
-          checkOut: { gte: data.checkIn },
-        },
-      ],
-    },
-  });
-
-  if (overlapping) {
-    throw new Error('Selected room is not available for these dates');
+  // Get all reservations for a specific hotel
+  async getReservationsByHotel(hotelId: number) {
+    return this.prisma.reservation.findMany({
+      where: { hotelId },
+      orderBy: { checkIn: 'desc' },
+    });
   }
-
-  // Create reservation
-  return this.prisma.reservation.create({ data });
 }
-
-async getReservationsByHotel(hotelId: number) {
-  return this.prisma.reservation.findMany({
-    where: { hotelId },
-    orderBy: { checkIn: 'desc' },
-  });
-}
-
-    
