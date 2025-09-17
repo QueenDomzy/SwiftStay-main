@@ -1,52 +1,72 @@
-# 🏨 SwiftStay Nigeria – Frontend
+# SwiftStay Nigeria
 
-SwiftStay is a hotel reservation and inventory management platform built to connect travelers with reliable stays across Nigeria – from busy cities to quiet towns.  
+💼 *From busy cities to quiet towns, SwiftStay will connect Nigeria—one stay at a time.*
 
-This repository contains the **frontend application** built with **Next.js 14, React 18, TypeScript, TailwindCSS, and Framer Motion**.
-
----
-
-## 🚀 Features
-- 🔐 **Authentication** (Register / Login)
-- 🏠 **Hotel Listings** with filters & search
-- 📅 **Booking System** integrated with backend APIs
-- 💳 **Payment Integration** (Paystack / Flutterwave ready)
-- 🎨 **Modern UI** with TailwindCSS + Framer Motion animations
-- 🤖 **AI Assistant Component** (for customer support)
+SwiftStay Nigeria is a full-stack hotel reservation and booking platform that connects users with hotels across Nigeria. This MVP version includes AI-powered recommendations to help users find the best stay based on their preferences.
 
 ---
 
-## 📂 Project Structure
-swiftstay-backend/
- ├── prisma/
-  │    └── schema.prisma
-   ├── src/
-    │    ├── index.ts         # App entry
-     │    ├── routes/
-      │    │     ├── auth.ts
-       │    │     ├── hotels.ts
-        │    │     ├── reservations.ts
-         │    │     └── payments.ts
-          │    └── utils/
-           │          └── auth.ts
-            ├── package.json
-             ├── tsconfig.json
-              └── .env
-              
-swiftstay-frontend/
-│── public/                # static assets (logos, images, icons)
-│── src/
-│   ├── app/               # Next.js 13+ App Router pages
-│   │   ├── layout.tsx     # global layout
-│   │   ├── page.tsx       # homepage
-│   │   ├── booking/       # booking pages
-│   │   ├── auth/          # login/register
-│   ├── components/        # reusable UI components
-│   ├── lib/               # helper functions (API calls, utils)
-│   ├── styles/            # global CSS or Tailwind config
-│   └── types/             # TypeScript types/interfaces
-│── .env.local.example     # frontend env variables (NEXT_PUBLIC_API_URL)
-│── package.json
-│── tsconfig.json
-│── tailwind.config.js
-│── vite.config.js (if Vite, else next.config.js for Next.js)
+## Table of Contents
+- [Project Overview](#project-overview)
+- [Tech Stack](#tech-stack)
+- [Features](#features)
+- [Installation](#installation)
+- [Environment Variables](#environment-variables)
+- [Running the App](#running-the-app)
+- [AI Integration](#ai-integration)
+- [Contributing](#contributing)
+- [License](#license)
+
+---
+
+## Project Overview
+SwiftStay simplifies hotel booking in Nigeria by offering:  
+- Searchable hotel listings  
+- Easy booking and payment  
+- Admin dashboard for hotel management  
+- AI-powered recommendations and chat assistant  
+
+This project is intended as a **Minimum Viable Product (MVP)** for rapid deployment and feedback collection.
+
+---
+
+## Tech Stack
+
+**Frontend:**  
+- Next.js 14 (React)  
+- TypeScript  
+- TailwindCSS  
+- Framer Motion  
+
+**Backend:**  
+- NestJS (Node.js framework)  
+- Prisma ORM with PostgreSQL  
+- JWT Authentication  
+- REST API  
+
+**AI Integration:**  
+- OpenAI GPT-4 API for hotel recommendations and chat assistant  
+
+---
+
+## Features
+
+**User:**  
+- Register & login  
+- Browse hotels with filters  
+- Book hotels  
+- AI-powered personalized recommendations  
+
+**Admin:**  
+- Login & dashboard access  
+- Add / update / delete hotels  
+- View bookings  
+
+---
+
+## Installation
+
+### 1. Clone the repository
+```bash
+git clone https://github.com/QueenDomzy/SwiftStay-main.git
+cd SwiftStay-main
