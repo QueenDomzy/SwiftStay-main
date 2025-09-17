@@ -2,21 +2,35 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { EmailService } from '../services/email.service';
+import { CreatePaymentDto } from './dto/create-payment.dto';
 
 @Injectable()
 export class PaymentsService {
   constructor(
-    private prisma: PrismaService,
-    private emailService: EmailService
+    private readonly prisma: PrismaService,
+    private readonly emailService: EmailService,
   ) {}
 
-  async initiatePayment(userId: number, amount: number) {
-    // Example: Save payment and send email
+  async initiatePayment(createPaymentDto: CreatePaymentDto) {
+    // Save payment attempt in DB
     const payment = await this.prisma.payment.create({
-      data: { userId, amount },
+      data: createPaymentDto,
     });
 
-    await this.emailService.sendPaymentConfirmation(userId, payment);
-    return payment;
+    // Example: send confirmation email
+    await this.emailService.sendPaymentConfirmation(payment.email, payment.amount);
+
+    return {
+      message: 'Payment initiated successfully',
+      paymentId: payment.id,
+    };
   }
-}
+
+  async findAll() {
+    return this.prisma.payment.findMany();
+  }
+
+  async findOne(id: number) {
+    return this.prisma.payment.findUnique({ where: { id } });
+  }
+      }
