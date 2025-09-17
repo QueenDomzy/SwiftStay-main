@@ -1,4 +1,4 @@
-// src/hotels/hotels.module.ts
+// src/hotels/hotel.module.ts
 import { Module } from '@nestjs/common';
 import { HotelService } from './hotel.service';
 import { HotelController } from './hotel.controller';
