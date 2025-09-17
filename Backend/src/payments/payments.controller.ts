@@ -1,10 +1,11 @@
-import { Body, Controller, Post } from '@nestjs/common';
-import { PaymentsService } from './payments.service';
+import { Controller, Post, Get, Body, Req, UseGuards } from '@nestjs/common';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';import { PaymentsService } from './payments.service';
 
 @Controller('payments')
 export class PaymentsController {
   constructor(private paymentsService: PaymentsService) {}
 
+  @UseGuards(JwtAuthGuard)  
   @Post('initiate')
   async initiate(@Body() body: any) {
     const { reservationId, amount } = body;
