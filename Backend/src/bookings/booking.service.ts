@@ -3,7 +3,7 @@ import { PrismaClient } from '../prisma/prisma.service';
 import { CreateBookingDto } from './dto/create-booking.dto';
 
 @Injectable()
-export class BookingsService {
+export class BookingService {
   constructor(private prisma: PrismaService) {}
 
   /**
