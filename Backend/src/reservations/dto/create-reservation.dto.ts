@@ -2,18 +2,13 @@
 import { IsInt, IsDateString, IsNotEmpty } from 'class-validator';
 
 export class CreateReservationDto {
-  @IsInt()
-  userId: number;
+  userId!: number;
 
-  @IsInt()
-  hotelId: number;
+  hotelId!: number;
 
-  @IsDateString()
-  checkInDate: string;
+  checkInDate!: string;
 
-  @IsDateString()
-  checkOutDate: string;
+  checkOutDate!: string;
 
-  @IsNotEmpty()
-  roomType: string;
+  roomType!: string;
 }
