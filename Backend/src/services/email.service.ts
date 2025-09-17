@@ -1,28 +1,31 @@
+// src/services/email.service.ts
 import { Injectable } from '@nestjs/common';
-import * as nodemailer from 'nodemailer';
+import nodemailer from 'nodemailer';
 
 @Injectable()
 export class EmailService {
-  private transporter;
+  private transporter: nodemailer.Transporter;
 
   constructor() {
+    // NOTE: Use real SMTP settings in production (from env variables)
     this.transporter = nodemailer.createTransport({
-      host: process.env.SMTP_HOST,
-      port: Number(process.env.SMTP_PORT),
-      secure: false, // true if port 465
+      host: process.env.SMTP_HOST || 'smtp.example.com',
+      port: Number(process.env.SMTP_PORT) || 587,
       auth: {
-        user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASS,
+        user: process.env.SMTP_USER || 'user',
+        pass: process.env.SMTP_PASS || 'pass',
       },
     });
   }
 
-  async sendMail(to: string, subject: string, text: string) {
-    return this.transporter.sendMail({
-      from: `"SwiftStay" <${process.env.SMTP_USER}>`,
-      to,
-      subject,
-      text,
+  async sendPaymentConfirmation(email: string, amount: number) {
+    // simple send — in prod build template and better handling
+    const info = await this.transporter.sendMail({
+      from: process.env.EMAIL_FROM || 'noreply@swiftstay.ng',
+      to: email,
+      subject: 'Payment Confirmation - SwiftStay',
+      text: `We received your payment of ${amount}. Thank you.`,
     });
+    return info;
   }
-}
+      }
