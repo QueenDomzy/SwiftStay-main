@@ -1,8 +1,16 @@
 // src/bookings/dto/create-booking.dto.ts
+import { IsInt, IsNotEmpty } from 'class-validator';
+
 export class CreateBookingDto {
-  guestName!: string;
-  checkIn!: string;  // ISO date string
-  checkOut!: string;
-  hotelId!: number;
-  roomId!: number;
+  @IsInt()
+  userId: number;
+
+  @IsInt()
+  hotelId: number;
+
+  @IsNotEmpty()
+  roomType: string;
+
+  @IsInt()
+  numberOfGuests: number;
 }
