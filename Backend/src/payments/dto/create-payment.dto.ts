@@ -2,19 +2,9 @@
 import { IsEmail, IsNumber, IsString, Min } from 'class-validator';
 
 export class CreatePaymentDto {
-  @IsString()
-  readonly userId: string;
-
-  @IsEmail()
-  readonly email: string;
-
-  @IsNumber()
-  @Min(1)
-  readonly amount: number;
-
-  @IsString()
-  readonly currency: string;
-
-  @IsString()
-  readonly paymentMethod: string;
+  userId!: string;
+  email!: string;
+  amount!: number;
+  currency!: string;
+  paymentMethod!: string;
 }
