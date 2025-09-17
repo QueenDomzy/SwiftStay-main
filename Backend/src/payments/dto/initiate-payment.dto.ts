@@ -3,8 +3,8 @@ import { IsInt, IsPositive } from 'class-validator';
 
 export class InitiatePaymentDto {
   @IsInt()
-  userId: number;
+  userId!: number;
 
   @IsPositive()
-  amount: number;
+  amount!: number;
 }
