@@ -1,35 +1,15 @@
-import { Body, Controller, Get, Post, Query } from '@nestjs/common';
-import { ReservationsService } from './reservations.service';
+import { Controller, Post, Body } from '@nestjs/common';
+import { ReservationService } from './reservation.service';
+import { CreateReservationDto } from './dto/create-reservation.dto';
 
 @Controller('reservations')
 export class ReservationsController {
-  constructor(private reservationsService: ReservationsService) {}
+  constructor(private readonly reservationService: ReservationService) {}
 
   @Post()
-  async createReservation(@Body() body: any) {
-    const { userId, hotelId, roomType, checkIn, checkOut, totalPrice } = body;
-    try {
-      const reservation = await this.reservationsService.createReservation({
-        userId,
-        hotelId,
-        roomType,
-        checkIn: new Date(checkIn),
-        checkOut: new Date(checkOut),
-        totalPrice: parseFloat(totalPrice),
-      });
-      return reservation;
-    } catch (err) {
-      return { error: err.message };
-    }
+  async create(@Body() createReservationDto: CreateReservationDto) {
+    return this.reservationService.createReservation(createReservationDto);
   }
 
-  @Get()
-  async getReservations(@Query('userId') userId: string) {
-    return this.reservationsService.getReservationsByUser(parseInt(userId));
-  }
-                          }
-
-@Get('hotel/:hotelId')
-async getHotelReservations(@Param('hotelId') hotelId: string) {
-  return this.reservationsService.getReservationsByHotel(parseInt(hotelId));
-      }
+  // Add other routes with proper syntax
+}
