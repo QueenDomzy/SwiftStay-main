@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import OpenAI from 'openai';
 
 @Injectable()
-export class AiService {  // <-- Make sure it's exported
+export class AiService {
   private openai: OpenAI;
 
   constructor() {
@@ -16,4 +16,9 @@ export class AiService {  // <-- Make sure it's exported
     });
     return response.choices[0].message?.content ?? '';
   }
-      }
+
+  async getHotelRecommendations(preferences: string): Promise<string[]> {
+    const text = await this.generateText(`Recommend hotels based on: ${preferences}`);
+    return text.split('\n').filter(Boolean);
+  }
+  }
