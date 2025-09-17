@@ -14,8 +14,10 @@ export class ReservationsService {
         roomType: data.roomType,
         status: 'confirmed',
         AND: [
-          { checkIn: { lte: data.checkOut } },
-          { checkOut: { gte: data.checkIn } },
+          {
+            checkIn: { lte: data.checkOut },
+            checkOut: { gte: data.checkIn },
+          },
         ],
       },
     });
@@ -24,13 +26,12 @@ export class ReservationsService {
       throw new Error('Selected room is not available for these dates');
     }
 
+    // Create reservation
     return this.prisma.reservation.create({ data });
   }
 
   async getReservationsByUser(userId: number) {
-    return this.prisma.reservation.findMany({
-      where: { userId },
-    });
+    return this.prisma.reservation.findMany({ where: { userId } });
   }
 
   async getReservationsByHotel(hotelId: number) {
@@ -39,4 +40,4 @@ export class ReservationsService {
       orderBy: { checkIn: 'desc' },
     });
   }
-  }
+}
