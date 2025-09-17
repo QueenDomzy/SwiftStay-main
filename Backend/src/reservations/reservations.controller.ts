@@ -11,5 +11,17 @@ export class ReservationsController {
     return this.reservationService.createReservation(createReservationDto);
   }
 
-  // Add other routes with proper syntax
+  @UseGuards(JwtAuthGuard)
+  @Post()
+  async createReservation(@Body() data: CreateReservationDto, @Request() req) {
+    // Attach userId from JWT
+    data.userId = req.user.userId;
+    return this.reservationService.createReservation(data);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('my')
+  async getMyReservations(@Request() req) {
+    return this.reservationService.getReservationsByUser(req.user.userId);
+  }
 }
