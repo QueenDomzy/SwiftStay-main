@@ -1,4 +1,4 @@
-// src/bookings/bookings.controller.ts
+// src/bookings/booking.controller.ts
 import { Controller, Get, Post, Delete, Param, Body, UseGuards, Req } from '@nestjs/common';
 import { BookingService } from './booking.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
@@ -12,16 +12,16 @@ export class BookingController {
 
   @Get(':hotelId')
   async findByHotel(@Param('hotelId') hotelId: string) {
-    return this.bookingsService.findByHotel(Number(hotelId));
+    return this.bookingService.findByHotel(Number(hotelId));
   }
 
   @Post()
   async create(@Body() createBookingDto: CreateBookingDto) {
-    return this.bookingsService.createBooking(createBookingDto);
+    return this.bookingService.createBooking(createBookingDto);
   }
 
   @Delete(':id')
   cancelBooking(@Param('id') id: string, @Req() req: any) {
-    return this.bookingsService.cancelBooking(Number(id), req.user.role, req.user.sub);
+    return this.bookingService.cancelBooking(Number(id), req.user.role, req.user.sub);
   }
 }
