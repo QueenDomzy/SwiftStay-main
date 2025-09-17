@@ -1,10 +1,10 @@
 import { Request, Response } from 'express';
 
 export const searchHotels = async (req: Request, res: Response) => {
-  try {
-    // your search logic here
-    res.json({ message: 'Search successful' });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-};
+ try {
+  const response = await axios.get(url);
+  return response.data;
+} catch (error: any) {
+  console.error("Hotel search error:", error?.message || error);
+  throw new Error("Failed to fetch hotels");
+} 
