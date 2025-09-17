@@ -13,33 +13,45 @@ datasource db {
 // MODELS
 // =============================
 
+model User {
+  id            Int            @id @default(autoincrement())
+  email         String         @unique
+  name          String
+  password      String
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  // 👇 opposite side of Reservation.user
+  reservations  Reservation[]
+}
+
 model Hotel {
-  id         Int      @id @default(autoincrement())
-  name       String
-  location   String
-  price      Float
-  roomType   String
-  photos     String[]
-  ownerId    Int
-  status     String   @default("pending")
-  createdAt  DateTime @default(now())
+  id            Int            @id @default(autoincrement())
+  name          String
+  location      String
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  // 👇 opposite side of Reservation.hotel
+  reservations  Reservation[]
 }
 
 model Reservation {
-  id           Int      @id @default(autoincrement())
-  userId       Int
-  hotelId      Int
-  roomType     String
-  status       String   @default("confirmed")
-  checkIn      DateTime
-  checkOut     DateTime
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  hotelId   Int
+  roomType  String
+  status    String   @default("confirmed")
+  checkIn   DateTime
+  checkOut  DateTime
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   // relations
-  user  User   @relation(fields: [userId], references: [id])
-  hotel Hotel  @relation(fields: [hotelId], references: [id])
+  user   User   @relation(fields: [userId], references: [id])
+  hotel  Hotel  @relation(fields: [hotelId], references: [id])
 }
+
 model Payment {
   id           Int      @id @default(autoincrement())
   reservationId Int
@@ -47,16 +59,6 @@ model Payment {
   status       String   @default("pending") // pending, success, failed
   reference    String   @unique
   createdAt    DateTime @default(now())
-}
-
-model User {
-  id        Int      @id @default(autoincrement())
-  name      String
-  email     String   @unique
-  password  String
-  role      Role     @default(USER)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
 }
 
 enum Role {
