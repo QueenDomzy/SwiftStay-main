@@ -1,4 +1,4 @@
-// src/booking/bookings.module.ts
+// src/bookings/bookings.module.ts
 import { Module } from '@nestjs/common';
 import { BookingController } from './bookings.controller';
 import { BookingService } from './bookings.service';
