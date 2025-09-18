@@ -37,9 +37,9 @@ export class ReservationsService {
   }
 
   async getReservationsByHotel(hotelId: number) {
-    return this.prisma.reservation.findMany({
-      where: { hotelId },
-      orderBy: { checkIn: 'desc' },
-    });
+  return this.prisma.reservation.findMany({
+    where: { hotelId },
+    orderBy: { checkIn: 'desc' },
+  });
   }
-}
+  }
