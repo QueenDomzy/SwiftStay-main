@@ -35,7 +35,6 @@ export class ReservationsService {
       where: { userId },
     });
   }
-
   async getReservationsByHotel(hotelId: number) {
   return this.prisma.reservation.findMany({
     where: { hotelId },
